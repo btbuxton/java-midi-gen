@@ -22,19 +22,20 @@ public class Main {
 		for (MidiDevice receiver : getReceivers()) {
 			if (receiver.getDeviceInfo().getName().startsWith("Boutiq")) {
 				toUse = receiver;
+				break;
 			}
 		}
+		if (null == toUse)
+			return;
 		playSingleNote(toUse);
 		sleep(1000);
 		playSimpleSequence(toUse);
 	}
-	
-	
 
 	private void playSimpleSequence(MidiDevice toUse) throws MidiUnavailableException, InvalidMidiDataException {
 		Sequence seq = new Sequence(Sequence.PPQ, 24);
 		Track track = seq.createTrack();
-		short[] notes = {60, 67, 72, 67};
+		short[] notes = { 60, 67, 72, 67 };
 		int ticks = 0;
 		for (short each : notes) {
 			MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, 0, each, 100);
@@ -45,6 +46,10 @@ public class Main {
 			track.add(eventOff);
 			ticks += 24;
 		}
+		MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, 0, 0);
+		MidiEvent eventOff = new MidiEvent(msgOff, ticks);
+		track.add(eventOff);
+		System.out.println("seq tick length: " + seq.getTickLength());
 		toUse.open();
 		try {
 			Receiver rec = toUse.getReceiver();
@@ -54,8 +59,12 @@ public class Main {
 				seqr.setTempoInBPM(120.0f);
 				seqr.getTransmitter().setReceiver(rec);
 				seqr.open();
-				seqr.setLoopCount(3);
+				seqr.setLoopCount(3); // Sequencer.LOOP_CONTINUOUSLY
 				seqr.setLoopEndPoint(-1);
+				addMetaEventListener(seqr);
+				System.out.println("loop start: " + seqr.getLoopStartPoint());
+				System.out.println("loop end: " + seqr.getLoopEndPoint());
+				System.out.println("sequencer ticks: " + seqr.getTickLength());
 				try {
 					seqr.start();
 					while (seqr.isRunning()) {
@@ -64,14 +73,28 @@ public class Main {
 				} finally {
 					seqr.close();
 				}
-				
+
 			} finally {
 				rec.close();
 			}
 		} finally {
 			toUse.close();
 		}
-		
+
+	}
+
+	private void addMetaEventListener(Sequencer seqr) {
+		int endOftrackMessage = 47;
+		seqr.addMetaEventListener(new MetaEventListener() {
+
+			@Override
+			public void meta(MetaMessage meta) {
+				if (endOftrackMessage == meta.getType()) {
+					System.out.println("DONE!");
+				}
+			}
+		});
+
 	}
 
 	private void playSingleNote(MidiDevice toUse) throws MidiUnavailableException, InvalidMidiDataException {
