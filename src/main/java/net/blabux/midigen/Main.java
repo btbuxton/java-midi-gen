@@ -20,10 +20,10 @@ public class Main {
 	private void run() throws MidiUnavailableException, InvalidMidiDataException {
 		MidiDevice toUse = null;
 		for (MidiDevice receiver : getReceivers()) {
-			if (receiver.getDeviceInfo().getName().startsWith("Boutiq")) {
+			//if (receiver.getDeviceInfo().getName().startsWith("Boutiq")) {
 				toUse = receiver;
 				break;
-			}
+			//}
 		}
 		if (null == toUse)
 			return;
