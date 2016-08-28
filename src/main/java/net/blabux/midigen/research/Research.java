@@ -1,4 +1,4 @@
-package net.blabux.midigen;
+package net.blabux.midigen.research;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.List;
 import javax.sound.midi.*;
 import javax.sound.midi.MidiDevice.Info;
 
-public class Main {
+public class Research {
 
 	public static void main(String[] args) {
-		Main main = new Main();
+		Research main = new Research();
 		try {
 			main.run();
 		} catch (Exception ex) {
@@ -27,6 +27,8 @@ public class Main {
 		}
 		if (null == toUse)
 			return;
+		playSingleNote(toUse);
+		sleep(1000);
 		playSimpleSequence(toUse);
 	}
 
@@ -41,8 +43,6 @@ public class Main {
 			track.add(eventOn);
 			MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, each, 0);
 			MidiEvent eventOff = new MidiEvent(msgOff, ticks + 20);
-			track.add(eventOff);
-			eventOff = new MidiEvent(msgOff, ticks + 24);
 			track.add(eventOff);
 			ticks += 24;
 		}
@@ -91,11 +91,33 @@ public class Main {
 			@Override
 			public void meta(MetaMessage meta) {
 				if (endOftrackMessage == meta.getType()) {
-					Main.this.notifyAll();
+					Research.this.notifyAll();
 				}
 			}
 		});
 
+	}
+
+	private void playSingleNote(MidiDevice toUse) throws MidiUnavailableException, InvalidMidiDataException {
+		toUse.open();
+		try {
+			Receiver receiver = toUse.getReceiver();
+			try {
+				ShortMessage myMsg = new ShortMessage();
+				// Start playing the note Middle C (60),
+				// moderately loud (velocity = 93).
+				myMsg.setMessage(ShortMessage.NOTE_ON, 0, 60, 93);
+				long timeStamp = -1;
+				receiver.send(myMsg, timeStamp);
+				sleep(1000);
+				myMsg.setMessage(ShortMessage.NOTE_OFF, 0, 60, 0);
+				receiver.send(myMsg, -1);
+			} finally {
+				receiver.close();
+			}
+		} finally {
+			toUse.close();
+		}
 	}
 
 	private void sleep(long ms) {
