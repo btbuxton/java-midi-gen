@@ -49,13 +49,14 @@ public class Main {
 		Track track = seq.createTrack();
 		List<Note> notes = Note.BY_NAME.get("D2").scale(Note.MINOR_PENT);
 		long seed = System.nanoTime();
-		Collections.shuffle(notes, new Random(seed));
+		Random random = new Random(seed);
+		Collections.shuffle(notes, random);
 		addNotes(track, notes, 24, 12);
-		notes = Note.BY_NAME.get("D3").scale(Note.MINOR_PENT);
-		Collections.shuffle(notes, new Random(seed));
+		notes = Note.BY_NAME.get("D2").scale(Note.MINOR_PENT); //D3
+		Collections.shuffle(notes, random);
 		addNotes(track, notes, 16, 18);
-		notes = Note.BY_NAME.get("D1").scale(Note.MINOR_PENT);
-		Collections.shuffle(notes, new Random(seed));
+		notes = Note.BY_NAME.get("D2").scale(Note.MINOR_PENT); //D1
+		Collections.shuffle(notes, random);
 		addNotes(track, notes, 72, 4);
 		System.out.println("seq tick length: " + seq.getTickLength());
 		toUse.open();
@@ -64,7 +65,7 @@ public class Main {
 			try {
 				Sequencer seqr = MidiSystem.getSequencer(false);
 				seqr.setSequence(seq);
-				seqr.setTempoInBPM(120.0f);
+				seqr.setTempoInBPM(60.0f);
 				seqr.getTransmitter().setReceiver(rec);
 				seqr.open();
 				seqr.setLoopCount(3); // Sequencer.LOOP_CONTINUOUSLY

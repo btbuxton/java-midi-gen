@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Note {
+	public final static short[] CHROMATIC = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 	public final static short[] MAJOR = { 0, 2, 4, 5, 7, 9, 11 };
 	public final static short[] MINOR_PENT = { 0, 3, 5, 7, 10 };
 	public final static short[] MAJOR_PENT = { 0, 2, 4, 7, 9 };
