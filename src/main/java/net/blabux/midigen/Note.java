@@ -44,7 +44,7 @@ public class Note {
 		}
 		return result;
 	}
-	
+
 	private Note(String name, short value) {
 		this.name = name;
 		this.value = value;
@@ -56,5 +56,21 @@ public class Note {
 
 	public short getValue() {
 		return value;
+	}
+	
+	public List<Note> scale(short[] formula) {
+		List<Note> result = new ArrayList<>(formula.length);
+		for (short each : formula) {
+			result.add(Note.ALL.get(getValue() + each));
+		}
+		return result;
+	}
+
+	public Note octaveUp() {
+		return Note.ALL.get(getValue() + 12); 
+	}
+	
+	public Note octaveDown() {
+		return Note.ALL.get(getValue() - 12); 
 	}
 }
