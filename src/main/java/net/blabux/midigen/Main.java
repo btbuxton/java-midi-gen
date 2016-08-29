@@ -1,10 +1,24 @@
 package net.blabux.midigen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
-import javax.sound.midi.*;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Track;
 
 public class Main {
 
@@ -33,22 +47,21 @@ public class Main {
 	private void playSimpleSequence(MidiDevice toUse) throws MidiUnavailableException, InvalidMidiDataException {
 		Sequence seq = new Sequence(Sequence.PPQ, 24);
 		Track track = seq.createTrack();
-		short[] notes = { 60, 67, 72, 67 };
+		List<Note> notes = Note.BY_NAME.get("D2").scale(Note.MINOR_PENT);
+		long seed = System.nanoTime();
+		Collections.shuffle(notes, new Random(seed));
 		int ticks = 0;
-		for (short each : notes) {
-			MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, 0, each, 100);
+		for (Note each : notes) {
+			MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, 0, each.getValue(), 100);
 			MidiEvent eventOn = new MidiEvent(msgOn, ticks);
 			track.add(eventOn);
-			MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, each, 0);
+			MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, each.getValue(), 0);
 			MidiEvent eventOff = new MidiEvent(msgOff, ticks + 20);
 			track.add(eventOff);
 			eventOff = new MidiEvent(msgOff, ticks + 24);
 			track.add(eventOff);
 			ticks += 24;
 		}
-		MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, 0, 0);
-		MidiEvent eventOff = new MidiEvent(msgOff, ticks);
-		track.add(eventOff);
 		System.out.println("seq tick length: " + seq.getTickLength());
 		toUse.open();
 		try {
