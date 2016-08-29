@@ -34,10 +34,10 @@ public class Main {
 	private void run() throws MidiUnavailableException, InvalidMidiDataException {
 		MidiDevice toUse = null;
 		for (MidiDevice receiver : getReceivers()) {
-			//if (receiver.getDeviceInfo().getName().startsWith("Boutiq")) {
-				toUse = receiver;
-				break;
-			//}
+			// if (receiver.getDeviceInfo().getName().startsWith("Boutiq")) {
+			toUse = receiver;
+			break;
+			// }
 		}
 		if (null == toUse)
 			return;
@@ -50,18 +50,13 @@ public class Main {
 		List<Note> notes = Note.BY_NAME.get("D2").scale(Note.MINOR_PENT);
 		long seed = System.nanoTime();
 		Collections.shuffle(notes, new Random(seed));
-		int ticks = 0;
-		for (Note each : notes) {
-			MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, 0, each.getValue(), 100);
-			MidiEvent eventOn = new MidiEvent(msgOn, ticks);
-			track.add(eventOn);
-			MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, each.getValue(), 0);
-			MidiEvent eventOff = new MidiEvent(msgOff, ticks + 20);
-			track.add(eventOff);
-			eventOff = new MidiEvent(msgOff, ticks + 24);
-			track.add(eventOff);
-			ticks += 24;
-		}
+		addNotes(track, notes, 24, 12);
+		notes = Note.BY_NAME.get("D3").scale(Note.MINOR_PENT);
+		Collections.shuffle(notes, new Random(seed));
+		addNotes(track, notes, 16, 18);
+		notes = Note.BY_NAME.get("D1").scale(Note.MINOR_PENT);
+		Collections.shuffle(notes, new Random(seed));
+		addNotes(track, notes, 72, 4);
 		System.out.println("seq tick length: " + seq.getTickLength());
 		toUse.open();
 		try {
@@ -96,9 +91,26 @@ public class Main {
 
 	}
 
+	private void addNotes(Track track, List<Note> notes, int note_length, int repeats) throws InvalidMidiDataException {
+		int ticks = 0;
+		for (int i = 0; i < repeats; i++) {
+			for (Note each : notes) {
+				MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, 0, each.getValue(), 100);
+				MidiEvent eventOn = new MidiEvent(msgOn, ticks);
+				track.add(eventOn);
+				MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, each.getValue(), 0);
+				MidiEvent eventOff = new MidiEvent(msgOff, (int) (ticks * 0.75));
+				track.add(eventOff);
+				eventOff = new MidiEvent(msgOff, ticks + note_length);
+				track.add(eventOff);
+				ticks += note_length;
+			}
+		}
+	}
+
 	private void addMetaEventListener(Sequencer seqr) {
-		//01 <len> <text>	Text Event
-		int endOftrackMessage = 47; //0x2F
+		// 01 <len> <text> Text Event
+		int endOftrackMessage = 47; // 0x2F
 		seqr.addMetaEventListener(new MetaEventListener() {
 
 			@Override
