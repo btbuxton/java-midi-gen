@@ -74,4 +74,25 @@ public class Note {
 	public Note octaveDown() {
 		return Note.ALL.get(getValue() - 12); 
 	}
+	
+	@Override
+	public int hashCode() {
+		return getValue();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		try {
+			return equals((Note)obj);
+		} catch(ClassCastException ex) {
+			return false;
+		}
+	}
+	
+	public boolean equals(Note another) {
+		return getValue() == another.getValue();
+	}
+	
+	public String toString() {
+		return getName();
+	}
 }
