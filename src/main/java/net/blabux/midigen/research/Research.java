@@ -93,6 +93,14 @@ public class Research {
 				if (endOftrackMessage == meta.getType()) {
 					Research.this.notifyAll();
 				}
+				/*
+				 *   if (event.getType() == END_OF_TRACK_MESSAGE) {
+				 *   if (sequencer != null && sequencer.isOpen()) {
+				 *       sequencer.setTickPosition(0);
+				 *       sequencer.start();
+				 *   }
+				 *  }
+				 */
 			}
 		});
 

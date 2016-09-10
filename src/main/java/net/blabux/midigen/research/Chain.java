@@ -68,5 +68,13 @@ public class Chain implements Iterable<Note> {
 			this.next = next;
 		}
 		
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append(String.valueOf(note));
+			builder.append('-');
+			builder.append(String.valueOf(begin));
+			return builder.toString();
+		}
+		
 	}
 }
