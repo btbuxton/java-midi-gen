@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
@@ -26,6 +28,7 @@ import net.blabux.midigen.Note;
 import net.blabux.midigen.RhythmGenerator;
 
 public class MarkovSequenceRunner {
+	private static final Logger LOG = Logger.getLogger(MarkovSequenceRunner.class.getName());
 	private static final int PPQ = 24;
 	private static final int END_OF_TRACK = 0x2F;
 
@@ -41,17 +44,28 @@ public class MarkovSequenceRunner {
 
 	public void run() throws Exception {
 		URL url = getClass().getResource("/RunningLate-DanWheeler.mid");
-		Chain chain = new ChainLoader(16).loadChain(url);
-		Iterator<Note> notes = new InfiniteIterator<>(chain);
+		Chain chain = new ChainLoader(64).loadChain(url);
 		MidiDevice device = getMidiDevice();
 		device.open();
 		try {
-			Supplier<Sequence> seqSupplier = () -> {
-				try {
-					return createSequence(notes);
-				} catch (InvalidMidiDataException e) {
-					throw new RuntimeException(e);
+			Supplier<Sequence> seqSupplier = new Supplier<Sequence>() {
+				Sequence current = null;
+				@Override
+				public Sequence get() {
+					Iterator<Note> notes = new InfiniteIterator<>(chain);
+					try {
+						if (null == current) {
+							current = createSequence(notes);
+						} else {
+							disintegrate(current);
+							createTrack(notes, current);
+						}
+						return current;
+					} catch (InvalidMidiDataException e) {
+						throw new RuntimeException(e);
+					}
 				}
+				
 			};
 			play(device, seqSupplier);
 		} finally {
@@ -61,11 +75,16 @@ public class MarkovSequenceRunner {
 
 	private MidiDevice getMidiDevice() throws MidiUnavailableException {
 		MidiDevice first = null;
+		String toFind = System.getProperty("midiReceiver", "UM1");
+		LOG.info("midiReceiver property set to: '" + toFind + "'");
 		for (MidiDevice receiver : getReceivers()) {
 			if (null == first) {
 				first = receiver;
 			}
-			if (receiver.getDeviceInfo().getName().startsWith("Boutiq")) {
+			String name = receiver.getDeviceInfo().getName();
+			LOG.info("Found Midi Receiver: " + name);
+			if (name.contains(toFind)) {
+				LOG.info("Matched: " + name);
 				return receiver;
 			}
 		}
@@ -86,14 +105,20 @@ public class MarkovSequenceRunner {
 
 	private Sequence createSequence(Iterator<Note> allNotes) throws InvalidMidiDataException {
 		Sequence seq = new Sequence(Sequence.PPQ, PPQ);
+		createTrack(allNotes, seq);
+		return seq;
+	}
+	
+	private Track createTrack(Iterator<Note> allNotes, Sequence seq) throws InvalidMidiDataException {
 		Track track = seq.createTrack();
 		RhythmGenerator rgen = new RhythmGenerator();
 		Iterable<Integer> rhythm = rgen.fillBars(4, 16);
 		int ticks = 0;
+		Iterator<Integer> velocityGen = IntStream.iterate(100, i -> i <= 25 ? 100 : i - 25).iterator();
 		for (int noteLength : rhythm) {
 			Note next = allNotes.next();
 			int length = noteLength * (PPQ / 4); // PPQ / 4 is sixteenth note
-			MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, 0, next.getValue(), 100);
+			MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, 0, next.getValue(), velocityGen.next());
 			MidiEvent eventOn = new MidiEvent(msgOn, ticks);
 			track.add(eventOn);
 			MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, next.getValue(), 0);
@@ -104,7 +129,46 @@ public class MarkovSequenceRunner {
 		MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, 0, 0);
 		MidiEvent eventOff = new MidiEvent(msgOff, ticks);
 		track.add(eventOff);
-		return seq;
+		return track;
+	}
+	
+	private void disintegrate(Sequence seq) {
+		Track[] tracks = seq.getTracks();
+		if (tracks.length > 4) {
+			seq.deleteTrack(tracks[0]);
+		}
+		int index = 0;
+		for (Track each : seq.getTracks()) {
+			disintegrate(each, (index % 2) == 0);
+			index++;
+		}
+	}
+
+	private void disintegrate(Track track, boolean deleteFirst) {
+		boolean deleteNext = deleteFirst;
+		int noteOffToDelete = -1;
+		List<MidiEvent> toDelete = new ArrayList<>();
+		for (int index = 0; index < track.size(); index++) {
+			MidiEvent event = track.get(index);
+			int command = event.getMessage().getMessage()[0] & 0xFF;
+			int note = event.getMessage().getMessage()[1] & 0xFF;
+			if (0x90 == command) {
+				if (deleteNext) {
+					toDelete.add(event);
+					deleteNext = false;
+					noteOffToDelete = note;
+				} else {
+					deleteNext = true;
+				}
+			}
+			if (0x80 == command && note == noteOffToDelete) {
+				toDelete.add(event);
+				noteOffToDelete = -1;
+			}
+		}
+		for (MidiEvent event : toDelete) {
+			track.remove(event);
+		}
 	}
 
 	private void play(MidiDevice toUse, Supplier<Sequence> seqSupplier) throws MidiUnavailableException, InvalidMidiDataException {
@@ -130,6 +194,7 @@ public class MarkovSequenceRunner {
 				while (seqr.isRunning()) {
 					sleep(200);
 				}
+				seqr.setTickPosition(0);
 			}
 		} finally {
 			seqr.close();
