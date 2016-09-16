@@ -2,6 +2,7 @@ package net.blabux.midigen.research;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
@@ -12,6 +13,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
@@ -21,7 +23,6 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
-import javax.sound.midi.MidiDevice.Info;
 
 import net.blabux.midigen.InfiniteIterator;
 import net.blabux.midigen.Note;
@@ -50,6 +51,7 @@ public class MarkovSequenceRunner {
 		try {
 			Supplier<Sequence> seqSupplier = new Supplier<Sequence>() {
 				Sequence current = null;
+
 				@Override
 				public Sequence get() {
 					Iterator<Note> notes = new InfiniteIterator<>(chain);
@@ -57,15 +59,15 @@ public class MarkovSequenceRunner {
 						if (null == current) {
 							current = createSequence(notes);
 						} else {
-							disintegrate(current);
 							createTrack(notes, current);
+							disintegrate(current);
 						}
 						return current;
 					} catch (InvalidMidiDataException e) {
 						throw new RuntimeException(e);
 					}
 				}
-				
+
 			};
 			play(device, seqSupplier);
 		} finally {
@@ -108,38 +110,47 @@ public class MarkovSequenceRunner {
 		createTrack(allNotes, seq);
 		return seq;
 	}
-	
+
+	// i -> random.nextInt(100) + 25
+	Iterator<Integer> velocityGen = IntStream.iterate(99, i -> i <= 33 ? 99 : i - 33).iterator();
+	Iterator<Integer> channelGen = new InfiniteIterator<>(Arrays.asList(0, 1, 2, 3));
+	Iterator<Integer> tempo = new InfiniteIterator<>(Arrays.asList(16, 32, 8));
+
 	private Track createTrack(Iterator<Note> allNotes, Sequence seq) throws InvalidMidiDataException {
 		Track track = seq.createTrack();
 		RhythmGenerator rgen = new RhythmGenerator();
-		Iterable<Integer> rhythm = rgen.fillBars(4, 16);
+		Iterable<Integer> rhythm = rgen.fillBars(4, tempo.next());
 		int ticks = 0;
-		Iterator<Integer> velocityGen = IntStream.iterate(100, i -> i <= 25 ? 100 : i - 25).iterator();
+		int channel = channelGen.next();
+		LOG.info("Created track with channel: " + channel);
 		for (int noteLength : rhythm) {
 			Note next = allNotes.next();
 			int length = noteLength * (PPQ / 4); // PPQ / 4 is sixteenth note
-			MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, 0, next.getValue(), velocityGen.next());
+			MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, channel, next.getValue(), velocityGen.next());
 			MidiEvent eventOn = new MidiEvent(msgOn, ticks);
 			track.add(eventOn);
-			MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, next.getValue(), 0);
-			MidiEvent eventOff = new MidiEvent(msgOff, ticks + length);
+			MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, channel, next.getValue(), 0);
+			MidiEvent eventOff = new MidiEvent(msgOff, ticks + (int)(length * 0.9));
 			track.add(eventOff);
 			ticks += length;
 		}
-		MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, 0, 0);
-		MidiEvent eventOff = new MidiEvent(msgOff, ticks);
+		MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, channel, 0, 0);
+		MidiEvent eventOff = new MidiEvent(msgOff, ticks - 1);
 		track.add(eventOff);
 		return track;
 	}
-	
+
 	private void disintegrate(Sequence seq) {
 		Track[] tracks = seq.getTracks();
 		if (tracks.length > 4) {
+			LOG.info("Removing: " + tracks[0] + "  because tracks is size "+tracks.length);
 			seq.deleteTrack(tracks[0]);
 		}
 		int index = 0;
 		for (Track each : seq.getTracks()) {
-			disintegrate(each, (index % 2) == 0);
+			if (index > 0) {
+				disintegrate(each, (index % 2) == 0);
+			}
 			index++;
 		}
 	}
@@ -171,7 +182,8 @@ public class MarkovSequenceRunner {
 		}
 	}
 
-	private void play(MidiDevice toUse, Supplier<Sequence> seqSupplier) throws MidiUnavailableException, InvalidMidiDataException {
+	private void play(MidiDevice toUse, Supplier<Sequence> seqSupplier)
+			throws MidiUnavailableException, InvalidMidiDataException {
 		Receiver rec = toUse.getReceiver();
 		try {
 			play(rec, seqSupplier);
@@ -183,12 +195,14 @@ public class MarkovSequenceRunner {
 	private void play(Receiver rec, Supplier<Sequence> seqSupplier)
 			throws MidiUnavailableException, InvalidMidiDataException {
 		Sequencer seqr = MidiSystem.getSequencer(false);
+		seqr.setSlaveSyncMode(Sequencer.SyncMode.MIDI_SYNC);
 		seqr.setTempoInBPM(120.0f);
 		seqr.getTransmitter().setReceiver(rec);
 		seqr.open();
 		addMetaEventListener(seqr);
 		try {
-			while (true) {
+			for (int index = 0; index < 12; index++) {
+				LOG.info("Iteration: "+ index);
 				seqr.setSequence(seqSupplier.get());
 				seqr.start();
 				while (seqr.isRunning()) {
