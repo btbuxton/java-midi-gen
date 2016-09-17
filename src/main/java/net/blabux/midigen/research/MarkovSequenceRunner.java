@@ -148,7 +148,7 @@ public class MarkovSequenceRunner {
 		}
 		int index = 0;
 		for (Track each : seq.getTracks()) {
-			if (index > 0) {
+			if (index > 2) {
 				disintegrate(each, (index % 2) == 0);
 			}
 			index++;
