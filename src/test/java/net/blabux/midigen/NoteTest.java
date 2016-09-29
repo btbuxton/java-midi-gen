@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import net.blabux.midigen.common.Note;
+
 public class NoteTest {
 
 	@Test

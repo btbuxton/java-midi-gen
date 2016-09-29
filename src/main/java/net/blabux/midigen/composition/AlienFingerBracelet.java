@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.composition;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,17 +24,30 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-import net.blabux.midigen.InfiniteIterator;
-import net.blabux.midigen.Note;
-import net.blabux.midigen.RhythmGenerator;
+import net.blabux.midigen.common.InfiniteIterator;
+import net.blabux.midigen.common.Note;
+import net.blabux.midigen.common.RhythmGenerator;
+import net.blabux.midigen.markov.Chain;
+import net.blabux.midigen.markov.ChainLoader;
 
-public class MarkovSequenceRunner {
-	private static final Logger LOG = Logger.getLogger(MarkovSequenceRunner.class.getName());
+/**
+ * This is the code used to create my composition "Alien Finger Bracelet".
+ * Assumes you have an external midi controller running on midi channels 1-4.
+ * 
+ * I train a markov chain N deep with a midi file from a composition that I love.
+ * I then generate 4 separate melodic lines and then degenerate them.
+ * 
+ * This is my first generative music program. Enjoy!
+ * @author btbuxton
+ *
+ */
+public class AlienFingerBracelet {
+	private static final Logger LOG = Logger.getLogger(AlienFingerBracelet.class.getName());
 	private static final int PPQ = 24;
 	private static final int END_OF_TRACK = 0x2F;
 
 	public static void main(String[] args) {
-		MarkovSequenceRunner runner = new MarkovSequenceRunner();
+		AlienFingerBracelet runner = new AlienFingerBracelet();
 		try {
 			runner.run();
 		} catch (Exception ex) {
@@ -220,11 +233,11 @@ public class MarkovSequenceRunner {
 			@Override
 			public void meta(MetaMessage meta) {
 				if (END_OF_TRACK == meta.getType()) {
-					MarkovSequenceRunner.this.notifyAll();
+					AlienFingerBracelet.this.notifyAll();
 					/*
 					 * if (seqr != null && seqr.isOpen()) {
 					 * seqr.setTickPosition(0); seqr.start(); } else {
-					 * MarkovSequenceRunner.this.notifyAll(); }
+					 * AlienFingerBracelet.this.notifyAll(); }
 					 */
 				}
 			}

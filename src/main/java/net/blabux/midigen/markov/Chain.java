@@ -1,11 +1,11 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.markov;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import net.blabux.midigen.Note;
+import net.blabux.midigen.common.Note;
 
 public class Chain implements Iterable<Note> {
 	private final static int MAX = 1000;

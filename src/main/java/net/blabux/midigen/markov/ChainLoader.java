@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.markov;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,7 +12,8 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
-import net.blabux.midigen.Note;
+import net.blabux.midigen.common.Note;
+import net.blabux.midigen.common.Ring;
 
 public class ChainLoader {
 	private final int depth;

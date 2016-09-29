@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.markov;
 
 /*
  * Link between two states for calculating weights

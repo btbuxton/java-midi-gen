@@ -1,9 +1,9 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.markov;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import net.blabux.midigen.Note;
+import net.blabux.midigen.common.Note;
 
 public class NoteState {
 	final Note note;

@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import net.blabux.midigen.research.Ring;
+import net.blabux.midigen.common.Ring;
 
 public class RingTest {
 

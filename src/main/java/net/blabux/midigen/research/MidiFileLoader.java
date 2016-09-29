@@ -12,7 +12,10 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
-import net.blabux.midigen.Note;
+import net.blabux.midigen.common.Note;
+import net.blabux.midigen.common.Ring;
+import net.blabux.midigen.markov.Chain;
+import net.blabux.midigen.markov.NoteState;
 
 public class MidiFileLoader {
 

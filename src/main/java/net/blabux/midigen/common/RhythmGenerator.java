@@ -1,4 +1,4 @@
-package net.blabux.midigen;
+package net.blabux.midigen.common;
 
 import java.util.LinkedList;
 import java.util.Random;

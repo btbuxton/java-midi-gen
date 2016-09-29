@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.common;
 
 import java.util.Iterator;
 import java.util.LinkedList;
