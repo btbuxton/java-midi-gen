@@ -42,9 +42,8 @@ public class Main {
 		}
 	}
 
-	private void run() throws MidiUnavailableException, InvalidMidiDataException {
+	private void run() throws MidiUnavailableException, InvalidMidiDataException, RuntimeException {
 		Optional<MidiDevice> toUse = MidiUtil.getMidiReceivers()
-				//.filter((device) -> device.getDeviceInfo().getName().startsWith("Boutiq"))
 				.findFirst();
 		playSimpleSequence(toUse.orElseThrow(()-> new RuntimeException("No Midi Receiver Available")));
 	}
@@ -137,18 +136,6 @@ public class Main {
 				// IGNORE IT
 			}
 		}
-	}
-
-	private List<MidiDevice> getReceivers() throws MidiUnavailableException {
-		List<MidiDevice> result = new ArrayList<>();
-		Info[] devices = MidiSystem.getMidiDeviceInfo();
-		for (Info each : devices) {
-			MidiDevice device = MidiSystem.getMidiDevice(each);
-			if (0 != device.getMaxReceivers()) {
-				result.add(device);
-			}
-		}
-		return result;
 	}
 
 }

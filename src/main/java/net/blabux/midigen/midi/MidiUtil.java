@@ -1,13 +1,13 @@
 package net.blabux.midigen.midi;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.MidiDevice.Info;
 
 /**
  * I loathe static classes, but this is just a placeholder to get objects from
@@ -54,6 +54,15 @@ public class MidiUtil {
 		Stream<MidiDevice> preferred = getMidiReceivers()
 				.filter((device) -> device.getDeviceInfo().getName().contains(toFind));
 		return preferred.findFirst().orElseGet(() -> MidiUtil.getMidiReceivers().findFirst().get());
+	}
+	
+	/**
+	 * Return names of midi receivers
+	 * @return
+	 */
+	public static final List<String> getMidiReceiverNames() {
+		Stream<MidiDevice> devices = getMidiReceivers();
+		return devices.map((device) -> device.getDeviceInfo().getName()).collect(Collectors.toList());
 	}
 
 }

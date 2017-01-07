@@ -91,7 +91,12 @@ public class AlienFingerBracelet {
 	private MidiDevice getMidiDevice() {
 		String toFind = System.getProperty("midiReceiver", "UM1");
 		LOG.info("midiReceiver property set to: '" + toFind + "'");
-		return MidiUtil.getMidiReceiversContainingName(toFind);
+		for (String name : MidiUtil.getMidiReceiverNames()) {
+			LOG.info("Possible midi device: " + name);
+		}
+		MidiDevice result = MidiUtil.getMidiReceiversContainingName(toFind);
+		LOG.info("Using midi device: "+ result.getDeviceInfo().getName());
+		return result;
 	}
 
 	private Sequence createSequence(Iterator<Note> allNotes) throws InvalidMidiDataException {
