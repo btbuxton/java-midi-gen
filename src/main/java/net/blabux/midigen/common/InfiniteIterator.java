@@ -2,6 +2,12 @@ package net.blabux.midigen.common;
 
 import java.util.Iterator;
 
+/**
+ * Endless iterator. Works like ring in Sonic Pi
+ * @author btbuxton
+ *
+ * @param <E>
+ */
 public class InfiniteIterator<E> implements Iterator<E> {
 	private final Iterable<E> source;
 	private Iterator<E> original;

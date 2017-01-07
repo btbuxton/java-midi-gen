@@ -17,6 +17,11 @@ import net.blabux.midigen.common.Ring;
 import net.blabux.midigen.markov.Chain;
 import net.blabux.midigen.markov.NoteState;
 
+/**
+ * Experiment for loading midi files and playing around with them
+ * @author btbuxton
+ *
+ */
 public class MidiFileLoader {
 
 	public static void main(String[] args) {

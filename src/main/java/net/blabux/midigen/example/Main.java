@@ -1,8 +1,9 @@
-package net.blabux.midigen;
+package net.blabux.midigen.example;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -10,9 +11,6 @@ import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
-
-import net.blabux.midigen.common.Note;
-
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
@@ -23,6 +21,16 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
+import net.blabux.midigen.common.Note;
+import net.blabux.midigen.midi.MidiUtil;
+/**
+ * Simple testing of the framework
+ * This is meant to be a playground only
+ * 
+ * Things will be commented in/out for my purposes only
+ * @author btbuxton
+ *
+ */
 public class Main {
 
 	public static void main(String[] args) {
@@ -35,16 +43,10 @@ public class Main {
 	}
 
 	private void run() throws MidiUnavailableException, InvalidMidiDataException {
-		MidiDevice toUse = null;
-		for (MidiDevice receiver : getReceivers()) {
-			// if (receiver.getDeviceInfo().getName().startsWith("Boutiq")) {
-			toUse = receiver;
-			break;
-			// }
-		}
-		if (null == toUse)
-			return;
-		playSimpleSequence(toUse);
+		Optional<MidiDevice> toUse = MidiUtil.getMidiReceivers()
+				//.filter((device) -> device.getDeviceInfo().getName().startsWith("Boutiq"))
+				.findFirst();
+		playSimpleSequence(toUse.orElseThrow(()-> new RuntimeException("No Midi Receiver Available")));
 	}
 
 	private void playSimpleSequence(MidiDevice toUse) throws MidiUnavailableException, InvalidMidiDataException {

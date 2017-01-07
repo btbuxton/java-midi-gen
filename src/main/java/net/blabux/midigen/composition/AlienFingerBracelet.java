@@ -13,7 +13,6 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
@@ -26,9 +25,10 @@ import javax.sound.midi.Track;
 
 import net.blabux.midigen.common.InfiniteIterator;
 import net.blabux.midigen.common.Note;
-import net.blabux.midigen.common.RhythmGenerator;
 import net.blabux.midigen.markov.Chain;
 import net.blabux.midigen.markov.ChainLoader;
+import net.blabux.midigen.midi.MidiUtil;
+import net.blabux.midigen.random.RhythmGenerator;
 
 /**
  * This is the code used to create my composition "Alien Finger Bracelet".
@@ -88,34 +88,10 @@ public class AlienFingerBracelet {
 		}
 	}
 
-	private MidiDevice getMidiDevice() throws MidiUnavailableException {
-		MidiDevice first = null;
+	private MidiDevice getMidiDevice() {
 		String toFind = System.getProperty("midiReceiver", "UM1");
 		LOG.info("midiReceiver property set to: '" + toFind + "'");
-		for (MidiDevice receiver : getReceivers()) {
-			if (null == first) {
-				first = receiver;
-			}
-			String name = receiver.getDeviceInfo().getName();
-			LOG.info("Found Midi Receiver: " + name);
-			if (name.contains(toFind)) {
-				LOG.info("Matched: " + name);
-				return receiver;
-			}
-		}
-		return first;
-	}
-
-	private List<MidiDevice> getReceivers() throws MidiUnavailableException {
-		List<MidiDevice> result = new ArrayList<>();
-		Info[] devices = MidiSystem.getMidiDeviceInfo();
-		for (Info each : devices) {
-			MidiDevice device = MidiSystem.getMidiDevice(each);
-			if (0 != device.getMaxReceivers()) {
-				result.add(device);
-			}
-		}
-		return result;
+		return MidiUtil.getMidiReceiversContainingName(toFind);
 	}
 
 	private Sequence createSequence(Iterator<Note> allNotes) throws InvalidMidiDataException {

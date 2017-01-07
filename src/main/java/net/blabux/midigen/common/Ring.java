@@ -3,6 +3,11 @@ package net.blabux.midigen.common;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+/**
+ * This is NOT the endless sequence in SonicPi, as elements
+ * are added, it's for keeping the collection at a constant max
+ * size. It will grow until it reaches the length sent to the constructor
+ */
 public class Ring<T> implements Iterable<T> {
 	final LinkedList<T> internal;
 	final int length;
