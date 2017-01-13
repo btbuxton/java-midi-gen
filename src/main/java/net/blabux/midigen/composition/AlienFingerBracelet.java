@@ -94,7 +94,7 @@ public class AlienFingerBracelet {
 		for (String name : MidiUtil.getMidiReceiverNames()) {
 			LOG.info("Possible midi device: " + name);
 		}
-		MidiDevice result = MidiUtil.getMidiReceiversContainingName(toFind);
+		MidiDevice result = MidiUtil.getMidiReceiversContainingNameOrDefault(toFind);
 		LOG.info("Using midi device: "+ result.getDeviceInfo().getName());
 		return result;
 	}

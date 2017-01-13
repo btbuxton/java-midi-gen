@@ -50,7 +50,7 @@ public class MidiUtil {
 	 * @param toFind
 	 * @return
 	 */
-	public static final MidiDevice getMidiReceiversContainingName(String toFind) {
+	public static final MidiDevice getMidiReceiversContainingNameOrDefault(String toFind) {
 		Stream<MidiDevice> preferred = getMidiReceivers()
 				.filter((device) -> device.getDeviceInfo().getName().contains(toFind));
 		return preferred.findFirst().orElseGet(() -> MidiUtil.getMidiReceivers().findFirst().get());
