@@ -8,6 +8,7 @@ import java.util.function.Function;
  *
  */
 public class Pulse {
+	private static final long MS = 1000000; // nanoseconds per ms
 	private static final double DEFAULT_TEMPO_BPM = 120.0;
 	private static final int PPQ = 24;
 	
@@ -24,11 +25,11 @@ public class Pulse {
 	
 	public void pulse(final Function<Long, Boolean> pulseFunc) {
 		long tick = 0;
-		final long start = System.currentTimeMillis();
+		final long start = System.nanoTime();
 		long tickEnd;
 		while (pulseFunc.apply(tick++)) {
-			tickEnd = System.currentTimeMillis();
-			long diff = (long)((tick * mspp) - (tickEnd - start));
+			tickEnd = System.nanoTime();
+			long diff = (long)((tick * mspp) - (tickEnd - start) / MS);
 			try {
 				//if (diff < 0) {
 					//System.out.println("falling behind by: "+diff);
@@ -51,7 +52,7 @@ public class Pulse {
 	/*
 	 * This is for testing only
 	 */
-	/*
+	
 	public static void main(String[] args) {
 		long begin = System.currentTimeMillis();
 		new Pulse().pulse((tick) -> {
@@ -60,5 +61,5 @@ public class Pulse {
 		long end = System.currentTimeMillis();
 		System.out.println(end - begin);
 	}
-	*/
+	
 }
