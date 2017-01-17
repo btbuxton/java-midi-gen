@@ -5,6 +5,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+/**
+ * An experiment with scheduled thread pools
+ * It's not as accurate as Pulse and is more code...Will delete...maybe
+ * @author btbuxton
+ *
+ */
 public class AltPulse {
 	private static final double DEFAULT_TEMPO_BPM = 120.0;
 	private static final int PPQ = 24;
