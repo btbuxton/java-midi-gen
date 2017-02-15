@@ -8,12 +8,12 @@ import java.util.LinkedList;
  * are added, it's for keeping the collection at a constant max
  * size. It will grow until it reaches the length sent to the constructor
  */
-public class Ring<T> implements Iterable<T> {
+public class LimitedIterable<T> implements Iterable<T> {
 	final LinkedList<T> internal;
 	final int length;
 	int position;
 
-	public Ring(int length) {
+	public LimitedIterable(int length) {
 		this.length = length;
 		this.internal = new LinkedList<T>();
 		this.position = -1;

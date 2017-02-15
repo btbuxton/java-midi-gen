@@ -14,7 +14,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-import net.blabux.midigen.common.InfiniteIterator;
+import net.blabux.midigen.common.RingIterator;
 import net.blabux.midigen.common.Note;
 import net.blabux.midigen.midi.MidiUtil;
 import net.blabux.midigen.midi.SequenceRunner;
@@ -74,10 +74,10 @@ public class ExampleSequence {
 
 	private Track createTrack(Sequence seq) throws InvalidMidiDataException {
 		Track track = seq.createTrack();
-		int note16 = PPQ / 4;
+		int note16 = seq.getResolution() / 4;
 		long ticks = 0;
 		int[] rhythm = new int[] { 1, 1, 4, 2, 8, 8, 2, 4, 1, 1 };
-		Iterator<Note> notes = new InfiniteIterator<>(Note.BY_NAME.get("E2").scale(Note.MINOR_PENT));
+		Iterator<Note> notes = new RingIterator<>(Note.BY_NAME.get("E2").scale(Note.MINOR_PENT));
 
 		for (int noteLength : rhythm) {
 			Note next = notes.next();

@@ -24,7 +24,7 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-import net.blabux.midigen.common.InfiniteIterator;
+import net.blabux.midigen.common.RingIterator;
 import net.blabux.midigen.common.Note;
 import net.blabux.midigen.markov.Chain;
 import net.blabux.midigen.markov.ChainLoader;
@@ -68,7 +68,7 @@ public class AlienFingerBracelet {
 
 				@Override
 				public Sequence get() {
-					Iterator<Note> notes = new InfiniteIterator<>(chain);
+					Iterator<Note> notes = new RingIterator<>(chain);
 					try {
 						if (null == current) {
 							current = createSequence(notes);
@@ -108,8 +108,8 @@ public class AlienFingerBracelet {
 
 	// i -> random.nextInt(100) + 25
 	Iterator<Integer> velocityGen = IntStream.iterate(99, i -> i <= 33 ? 99 : i - 33).iterator();
-	Iterator<Integer> channelGen = new InfiniteIterator<>(Arrays.asList(0, 1, 2, 3));
-	Iterator<Integer> tempo = new InfiniteIterator<>(Arrays.asList(16, 32, 8));
+	Iterator<Integer> channelGen = new RingIterator<>(Arrays.asList(0, 1, 2, 3));
+	Iterator<Integer> tempo = new RingIterator<>(Arrays.asList(16, 32, 8));
 
 	private Track createTrack(Iterator<Note> allNotes, Sequence seq) throws InvalidMidiDataException {
 		Track track = seq.createTrack();

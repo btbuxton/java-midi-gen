@@ -6,13 +6,13 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import net.blabux.midigen.common.Ring;
+import net.blabux.midigen.common.LimitedIterable;
 
-public class RingTest {
+public class LimitedIterableTest {
 
 	@Test
 	public void testOne() {
-		Ring<Integer> subject = new Ring<Integer>(3);
+		LimitedIterable<Integer> subject = new LimitedIterable<Integer>(3);
 		subject.add(1);
 		Iterator<Integer> iter = subject.iterator();
 		assertTrue(iter.hasNext());
@@ -22,7 +22,7 @@ public class RingTest {
 	
 	@Test
 	public void testTwo() {
-		Ring<Integer> subject = new Ring<Integer>(3);
+		LimitedIterable<Integer> subject = new LimitedIterable<Integer>(3);
 		subject.add(1);
 		subject.add(2);
 		Iterator<Integer> iter = subject.iterator();
@@ -34,7 +34,7 @@ public class RingTest {
 	
 	@Test
 	public void testThree() {
-		Ring<Integer> subject = new Ring<Integer>(3);
+		LimitedIterable<Integer> subject = new LimitedIterable<Integer>(3);
 		subject.add(1);
 		subject.add(2);
 		subject.add(3);
@@ -48,7 +48,7 @@ public class RingTest {
 	
 	@Test
 	public void testFour() {
-		Ring<Integer> subject = new Ring<Integer>(3);
+		LimitedIterable<Integer> subject = new LimitedIterable<Integer>(3);
 		subject.add(1);
 		subject.add(2);
 		subject.add(3);
@@ -63,7 +63,7 @@ public class RingTest {
 	
 	@Test
 	public void testFive() {
-		Ring<Integer> subject = new Ring<Integer>(3);
+		LimitedIterable<Integer> subject = new LimitedIterable<Integer>(3);
 		subject.add(1);
 		subject.add(2);
 		subject.add(3);

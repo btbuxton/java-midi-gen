@@ -8,11 +8,11 @@ import java.util.Iterator;
  *
  * @param <E>
  */
-public class InfiniteIterator<E> implements Iterator<E> {
+public class RingIterator<E> implements Iterator<E> {
 	private final Iterable<E> source;
 	private Iterator<E> original;
 
-	public InfiniteIterator(Iterable<E> source) {
+	public RingIterator(Iterable<E> source) {
 		this.source = source;
 	}
 	@Override

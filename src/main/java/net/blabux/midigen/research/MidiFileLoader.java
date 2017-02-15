@@ -13,7 +13,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
 import net.blabux.midigen.common.Note;
-import net.blabux.midigen.common.Ring;
+import net.blabux.midigen.common.LimitedIterable;
 import net.blabux.midigen.markov.Chain;
 import net.blabux.midigen.markov.NoteState;
 
@@ -38,7 +38,7 @@ public class MidiFileLoader {
 		Sequence seq = MidiSystem.getSequence(url);
 		NoteState root = new NoteState();
 		for (Track eachTrack : seq.getTracks()) {
-			Ring<Note> ring = new Ring<Note>(8);
+			LimitedIterable<Note> ring = new LimitedIterable<Note>(8);
 			Iterable<Note> notes = noteOns(eachTrack);
 			for (Note each : notes) {
 				NoteState current = root;

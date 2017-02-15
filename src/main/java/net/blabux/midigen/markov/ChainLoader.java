@@ -13,7 +13,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
 import net.blabux.midigen.common.Note;
-import net.blabux.midigen.common.Ring;
+import net.blabux.midigen.common.LimitedIterable;
 
 public class ChainLoader {
 	private final int depth;
@@ -26,7 +26,7 @@ public class ChainLoader {
 		Sequence seq = MidiSystem.getSequence(url);
 		NoteState root = new NoteState();
 		for (Track eachTrack : seq.getTracks()) {
-			Ring<Note> ring = new Ring<Note>(depth);
+			LimitedIterable<Note> ring = new LimitedIterable<Note>(depth);
 			Iterable<Note> notes = noteOns(eachTrack);
 			for (Note each : notes) {
 				NoteState current = root;
