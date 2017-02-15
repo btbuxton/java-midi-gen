@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
@@ -51,7 +52,7 @@ public class AlienFingerBracelet {
 		try {
 			runner.run();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 
 	}

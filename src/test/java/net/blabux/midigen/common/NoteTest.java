@@ -1,4 +1,4 @@
-package net.blabux.midigen;
+package net.blabux.midigen.common;
 
 import static org.junit.Assert.assertEquals;
 

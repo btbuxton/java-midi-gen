@@ -40,6 +40,7 @@ public class PulseIterator implements Iterator<Long> {
 	public Long next() {
 		if (start > 0) {
 			final long now = System.nanoTime();
+			//need to change this to a moving start....
 			long diff = (long) ((tick * mspp) - (now - start) / MS);
 			if (diff > 0) {
 				try {
