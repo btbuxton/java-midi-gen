@@ -1,7 +1,5 @@
 package net.blabux.midigen.midi;
 
-import java.util.function.Supplier;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
@@ -34,8 +32,8 @@ public class SequenceRunner {
 		sequencer = null;
 	}
 
-	public void play(Supplier<Sequence> seqSupplier) throws InvalidMidiDataException {
-		sequencer.setSequence(seqSupplier.get());
+	public void play(Sequence seq) throws InvalidMidiDataException {
+		sequencer.setSequence(seq);
 		sequencer.setTempoInBPM(tempoBPM);
 		sequencer.setTickPosition(0);
 		sequencer.start();
@@ -43,22 +41,17 @@ public class SequenceRunner {
 			sleep(200);
 		}
 	}
-	
-	public void loop(Supplier<Sequence> seqSupplier) throws InvalidMidiDataException {
-		while (true) {
-			play(seqSupplier);
-		}
-	}
-	
-	public void during(Supplier<Sequence> seqSupplier) throws MidiUnavailableException, InvalidMidiDataException {
+
+	public void loop(Iterable<Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {
 		open();
 		try {
-			play(seqSupplier);
+			for (Sequence seq : sequences)
+				play(seq);
 		} finally {
 			close();
 		}
 	}
-	
+
 	private Sequencer createSequencer() throws MidiUnavailableException {
 		Sequencer seqr = MidiSystem.getSequencer(false);
 		seqr.setSlaveSyncMode(Sequencer.SyncMode.MIDI_SYNC);

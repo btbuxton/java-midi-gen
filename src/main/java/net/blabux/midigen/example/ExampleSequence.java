@@ -18,6 +18,7 @@ import net.blabux.midigen.common.InfiniteIterator;
 import net.blabux.midigen.common.Note;
 import net.blabux.midigen.midi.MidiUtil;
 import net.blabux.midigen.midi.SequenceRunner;
+import net.blabux.midigen.research.InfiniteIterable;
 
 public class ExampleSequence {
 	private static final Logger LOG = Logger.getLogger(ExampleSequence.class.getName());
@@ -56,9 +57,8 @@ public class ExampleSequence {
 	private void run(MidiDevice device) throws MidiUnavailableException, InvalidMidiDataException {
 		Receiver rec = device.getReceiver();
 		SequenceRunner runner = new SequenceRunner(rec);
-		runner.open();
 		try {
-			runner.loop(() -> {
+			runner.loop(new InfiniteIterable<Sequence>(() -> {
 				try {
 					Sequence seq = new Sequence(Sequence.PPQ, PPQ);
 					createTrack(seq);
@@ -66,9 +66,8 @@ public class ExampleSequence {
 				} catch(InvalidMidiDataException ex) {
 					throw new IllegalStateException(ex);
 				}
-			});
+			}));
 		} finally {
-			runner.close();
 			rec.close();
 		}
 	}
@@ -94,7 +93,7 @@ public class ExampleSequence {
 		MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, 0, 0);
 		MidiEvent eventOff = new MidiEvent(msgOff, ticks);
 		track.add(eventOff);
-		LOG.info(String.format("ticks %d", track.ticks()));
+		//LOG.info(String.format("ticks %d", track.ticks()));
 		return track;
 	}
 
