@@ -56,10 +56,11 @@ public class ExampleSequence {
 
 	private void run(MidiDevice device) throws MidiUnavailableException, InvalidMidiDataException {
 		Receiver rec = device.getReceiver();
-		SequenceRunner runner = new SequenceRunner(rec);
+		SequenceRunner runner = new SequenceRunner(rec, 86f);
 		try {
 			runner.loop(new InfiniteIterable<Sequence>(() -> {
 				try {
+					LOG.info(String.format("Tempo: %s", String.valueOf(runner.getTempoBPM())));
 					Sequence seq = new Sequence(Sequence.PPQ, PPQ);
 					createTrack(seq);
 					return seq;

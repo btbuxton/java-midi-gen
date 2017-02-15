@@ -13,14 +13,20 @@ public class SequenceRunner {
 	private static final int END_OF_TRACK = 0x2F;
 
 	private final Receiver receiver;
-	private final float tempoBPM;
+	private final Object lock;
+	private float tempoBPM;
 	private Sequencer sequencer;
 
-	public SequenceRunner(Receiver receiver) throws MidiUnavailableException {
-		this.receiver = receiver;
-		this.tempoBPM = 120f;
+	public SequenceRunner(Receiver receiver) {
+		this(receiver, 120.0f);
 	}
-
+	
+	public SequenceRunner(Receiver receiver, float tempoBPM) {
+		this.receiver = receiver;
+		this.lock = new Object();
+		this.tempoBPM = tempoBPM;
+	}
+	
 	public void open() throws MidiUnavailableException {
 		sequencer = createSequencer();
 	}
@@ -45,11 +51,20 @@ public class SequenceRunner {
 	public void loop(Iterable<Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {
 		open();
 		try {
-			for (Sequence seq : sequences)
+			for (Sequence seq : sequences) {
 				play(seq);
+			}
 		} finally {
 			close();
 		}
+	}
+	
+	public void setTempoBPM(float newTempo) {
+		this.tempoBPM = newTempo;
+	}
+	
+	public float getTempoBPM() {
+		return tempoBPM;
 	}
 
 	private Sequencer createSequencer() throws MidiUnavailableException {
@@ -62,9 +77,9 @@ public class SequenceRunner {
 	}
 
 	private void sleep(long ms) {
-		synchronized (this) {
+		synchronized (lock) {
 			try {
-				wait(ms);
+				lock.wait(ms);
 			} catch (InterruptedException e) {
 				// IGNORE IT
 			}
@@ -76,7 +91,7 @@ public class SequenceRunner {
 			@Override
 			public void meta(MetaMessage meta) {
 				if (END_OF_TRACK == meta.getType()) {
-					SequenceRunner.this.notifyAll();
+					SequenceRunner.this.lock.notifyAll();
 				}
 			}
 		});
