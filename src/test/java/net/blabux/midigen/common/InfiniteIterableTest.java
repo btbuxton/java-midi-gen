@@ -1,10 +1,12 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.common;
 
 import static org.junit.Assert.*;
 
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import net.blabux.midigen.common.InfiniteIterable;
 
 public class InfiniteIterableTest {
 

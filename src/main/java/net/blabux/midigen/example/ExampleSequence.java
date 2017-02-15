@@ -15,10 +15,10 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import net.blabux.midigen.common.RingIterator;
+import net.blabux.midigen.common.InfiniteIterable;
 import net.blabux.midigen.common.Note;
 import net.blabux.midigen.midi.MidiUtil;
 import net.blabux.midigen.midi.SequenceRunner;
-import net.blabux.midigen.research.InfiniteIterable;
 
 public class ExampleSequence {
 	private static final Logger LOG = Logger.getLogger(ExampleSequence.class.getName());
