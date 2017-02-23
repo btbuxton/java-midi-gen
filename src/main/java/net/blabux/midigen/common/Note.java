@@ -7,10 +7,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class Note {
 	public final static List<Note> ALL;
-	private final static Map<String, Note> BY_NAME;
+	
+	private final static Pattern NAME_PARTS = Pattern.compile("^([A-G][sf\\#]?)(\\-?[0-9])$");
 
 	private final NoteName name;
 	private final int value;
@@ -23,11 +27,16 @@ public class Note {
 			nameMapping.put(each.toString(), each);
 		}
 		ALL = Collections.unmodifiableList(all);
-		BY_NAME = Collections.unmodifiableMap(nameMapping);
 	}
 	
 	public static Note named(String name) {
-		return BY_NAME.get(name);
+		Matcher matcher = NAME_PARTS.matcher(name);
+		if (!matcher.find()) {
+			throw new IllegalArgumentException("Invalid name: " + name);
+		}
+		NoteName noteName = NoteName.get(matcher.group(1));
+		int octave = Integer.parseInt(matcher.group(2));
+		return noteName.note(octave);
 	}
 
 	private static List<Note> create() {

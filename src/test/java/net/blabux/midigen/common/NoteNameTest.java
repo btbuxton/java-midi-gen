@@ -25,5 +25,11 @@ public class NoteNameTest {
 		NoteName b = NoteName.B;
 		assertEquals(11, b.ordinal());
 	}
+	
+	@Test
+	public void note() {
+		Note c2 = NoteName.C.note(2);
+		assertEquals("C2", c2.toString());
+	}
 
 }

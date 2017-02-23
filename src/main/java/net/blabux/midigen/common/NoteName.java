@@ -52,4 +52,11 @@ public enum NoteName {
 		return names;
 	}
 	
+	public Note note(int octave) {
+		int value = ((octave + 2) * 12) + ordinal();
+		if (value < 0 || value > 127) {
+			throw new IllegalStateException("Value out of bounds: " + String.valueOf(value));
+		}
+		return Note.ALL.get(value);
+	}
 }
