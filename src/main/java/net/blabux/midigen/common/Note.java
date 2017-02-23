@@ -9,23 +9,24 @@ import java.util.List;
 import java.util.Map;
 
 public class Note {
-	public final static String[] NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+	public final static String[] NAMES = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 	public final static List<Note> ALL;
 	public final static Map<String, Note> BY_NAME;
-	
+
 	private final String name;
-	private final short value;
-	
+	private final int value;
+	private final int octave;
+
 	static {
 		List<Note> all = create();
-		Map<String,Note> nameMapping = new HashMap<>(128);
+		Map<String, Note> nameMapping = new HashMap<>(128);
 		for (Note each : all) {
-			nameMapping.put(each.getName(), each);
+			nameMapping.put(each.toString(), each);
 		}
 		ALL = Collections.unmodifiableList(all);
 		BY_NAME = Collections.unmodifiableMap(nameMapping);
 	}
-	
+
 	static List<Note> create() {
 		List<Note> result = new ArrayList<>(128);
 		short octave = -2;
@@ -36,14 +37,15 @@ public class Note {
 				namesIter = names.iterator();
 				octave++;
 			}
-			String name = namesIter.next() + String.valueOf(octave);
-			result.add(new Note(name, value));
+			String name = namesIter.next();
+			result.add(new Note(name, octave, value));
 		}
 		return result;
 	}
 
-	private Note(String name, short value) {
+	private Note(String name, int octave, int value) {
 		this.name = name;
+		this.octave = octave;
 		this.value = value;
 	}
 
@@ -51,36 +53,42 @@ public class Note {
 		return name;
 	}
 
-	public short getValue() {
+	public int getOctave() {
+		return octave;
+	}
+
+	public int getValue() {
 		return value;
 	}
 
 	public Note octaveUp() {
-		return Note.ALL.get(getValue() + 12); 
+		return Note.ALL.get(getValue() + 12);
 	}
-	
+
 	public Note octaveDown() {
-		return Note.ALL.get(getValue() - 12); 
+		return Note.ALL.get(getValue() - 12);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return getValue();
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		try {
-			return equals((Note)obj);
-		} catch(ClassCastException ex) {
+			return equals((Note) obj);
+		} catch (ClassCastException ex) {
 			return false;
 		}
 	}
-	
+
 	public boolean equals(Note another) {
 		return getValue() == another.getValue();
 	}
-	
+
 	public String toString() {
-		return getName();
+		return getName() + String.valueOf(getOctave());
+
 	}
 }

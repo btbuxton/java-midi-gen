@@ -22,7 +22,7 @@ public class Scale {
 
 	public List<Note> notes(Note root) {
 		List<Note> result = new ArrayList<>(formula.length);
-		final short rootNoteValue = root.getValue();
+		final int rootNoteValue = root.getValue();
 		for (int each : formula) {
 			result.add(Note.ALL.get(rootNoteValue + each));
 		}
