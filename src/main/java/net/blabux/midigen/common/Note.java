@@ -45,6 +45,26 @@ public class Note {
 		}
 		return result;
 	}
+	
+	/**
+	 * Assumptions
+	 * no number in scale is greater than 12
+	 * mode is not greater than scale length
+	 * @param scale
+	 * @param mode
+	 * @return
+	 */
+	static short[] mode(final short[] scale, final int mode) {
+		final int length = scale.length;
+		final short[] result = new short[length];
+		final int start = (mode - 1) % length;
+		final short offset = scale[start];
+		for (int index = 0; index < length; index++) {
+			short value = (short)(scale[(index + start) % length] - offset);
+			result[index] = (short)(value < 0 ? value + 12 : value);
+		}
+		return result;
+	}
 
 	private Note(String name, short value) {
 		this.name = name;
