@@ -20,6 +20,7 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import net.blabux.midigen.common.Note;
+import net.blabux.midigen.common.Scale;
 import net.blabux.midigen.midi.MidiUtil;
 /**
  * Simple testing of the framework
@@ -49,15 +50,16 @@ public class Main {
 	private void playSimpleSequence(MidiDevice toUse) throws MidiUnavailableException, InvalidMidiDataException {
 		Sequence seq = new Sequence(Sequence.PPQ, 24);
 		Track track = seq.createTrack();
-		List<Note> notes = Note.BY_NAME.get("D2").scale(Note.MINOR_PENT);
+		Scale minorPent = Scale.MINOR_PENT;
+		List<Note> notes = minorPent.notes(Note.BY_NAME.get("D2"));
 		long seed = System.nanoTime();
 		Random random = new Random(seed);
 		Collections.shuffle(notes, random);
 		addNotes(track, notes, 24, 12);
-		notes = Note.BY_NAME.get("D2").scale(Note.MINOR_PENT); //D3
+		notes = minorPent.notes(Note.BY_NAME.get("D2"));
 		Collections.shuffle(notes, random);
 		addNotes(track, notes, 16, 18);
-		notes = Note.BY_NAME.get("D2").scale(Note.MINOR_PENT); //D1
+		notes = minorPent.notes(Note.BY_NAME.get("D2"));
 		Collections.shuffle(notes, random);
 		addNotes(track, notes, 72, 4);
 		System.out.println("seq tick length: " + seq.getTickLength());

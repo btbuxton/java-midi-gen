@@ -16,6 +16,7 @@ import javax.sound.midi.Track;
 import net.blabux.midigen.common.InfiniteIterable;
 import net.blabux.midigen.common.Note;
 import net.blabux.midigen.common.RingIterator;
+import net.blabux.midigen.common.Scale;
 import net.blabux.midigen.midi.MidiUtil;
 import net.blabux.midigen.midi.SequenceRunner;
 import net.blabux.midigen.research.TrackBuilder;
@@ -78,7 +79,7 @@ public class ExampleSequence {
 		int note16 = seq.getResolution() / 4;
 		long ticks = 0;
 		int[] rhythm = new int[] { 1, 1, 4, 2, 8, 8, 2, 4, 1, 1 };
-		List<Note> scale = Note.BY_NAME.get("E2").scale(Note.MINOR_PENT);
+		List<Note> scale = Scale.MINOR_PENT.notes(Note.BY_NAME.get("E2"));
 		Collections.shuffle(scale);
 		Iterator<Note> notes = new RingIterator<>(scale);
 
