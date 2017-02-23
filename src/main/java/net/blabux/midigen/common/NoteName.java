@@ -51,4 +51,5 @@ public enum NoteName {
 	String[] getNames() {
 		return names;
 	}
+	
 }

@@ -9,11 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Note {
-	public final static String[] NAMES = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 	public final static List<Note> ALL;
-	public final static Map<String, Note> BY_NAME;
+	private final static Map<String, Note> BY_NAME;
 
-	private final String name;
+	private final NoteName name;
 	private final int value;
 	private final int octave;
 
@@ -26,30 +25,34 @@ public class Note {
 		ALL = Collections.unmodifiableList(all);
 		BY_NAME = Collections.unmodifiableMap(nameMapping);
 	}
+	
+	public static Note named(String name) {
+		return BY_NAME.get(name);
+	}
 
-	static List<Note> create() {
+	private static List<Note> create() {
 		List<Note> result = new ArrayList<>(128);
-		short octave = -2;
-		Iterable<String> names = Arrays.asList(NAMES);
-		Iterator<String> namesIter = names.iterator();
+		int octave = -2;
+		Iterable<NoteName> names = Arrays.asList(NoteName.values());
+		Iterator<NoteName> namesIter = names.iterator();
 		for (short value = 0; value < 128; value++) {
 			if (!namesIter.hasNext()) {
 				namesIter = names.iterator();
 				octave++;
 			}
-			String name = namesIter.next();
+			NoteName name = namesIter.next();
 			result.add(new Note(name, octave, value));
 		}
 		return result;
 	}
 
-	private Note(String name, int octave, int value) {
+	private Note(NoteName name, int octave, int value) {
 		this.name = name;
 		this.octave = octave;
 		this.value = value;
 	}
 
-	public String getName() {
+	public NoteName getName() {
 		return name;
 	}
 

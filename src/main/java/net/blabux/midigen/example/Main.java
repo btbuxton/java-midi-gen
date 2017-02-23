@@ -51,15 +51,15 @@ public class Main {
 		Sequence seq = new Sequence(Sequence.PPQ, 24);
 		Track track = seq.createTrack();
 		Scale minorPent = Scale.MINOR_PENT;
-		List<Note> notes = minorPent.notes(Note.BY_NAME.get("D2"));
+		List<Note> notes = minorPent.notes(Note.named("D2"));
 		long seed = System.nanoTime();
 		Random random = new Random(seed);
 		Collections.shuffle(notes, random);
 		addNotes(track, notes, 24, 12);
-		notes = minorPent.notes(Note.BY_NAME.get("D2"));
+		notes = minorPent.notes(Note.named("D2"));
 		Collections.shuffle(notes, random);
 		addNotes(track, notes, 16, 18);
-		notes = minorPent.notes(Note.BY_NAME.get("D2"));
+		notes = minorPent.notes(Note.named("D2"));
 		Collections.shuffle(notes, random);
 		addNotes(track, notes, 72, 4);
 		System.out.println("seq tick length: " + seq.getTickLength());

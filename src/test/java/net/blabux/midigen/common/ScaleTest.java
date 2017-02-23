@@ -12,19 +12,19 @@ public class ScaleTest {
 
 	@Test
 	public void testScale() {
-		Note f2 = Note.BY_NAME.get("F2");
+		Note f2 = Note.named("F2");
 		List<Note> minor = Scale.MINOR_PENT.notes(f2);
 		assertEquals(5, minor.size());
 		assertEquals("F2", minor.get(0).toString());
-		assertEquals("G#2", minor.get(1).toString());
-		assertEquals("A#2", minor.get(2).toString());
+		assertEquals("Gs2", minor.get(1).toString());
+		assertEquals("As2", minor.get(2).toString());
 		assertEquals("C3", minor.get(3).toString());
-		assertEquals("D#3", minor.get(4).toString());
+		assertEquals("Ds3", minor.get(4).toString());
 	}
 	
 	@Test
 	public void testMode() {
-		Note e2 = Note.BY_NAME.get("E2");
+		Note e2 = Note.named("E2");
 		List<Note> phrygian = Scale.MAJOR.mode(Mode.Phrygian).notes(e2);
 		assertEquals(7, phrygian.size());
 		assertEquals("E2", phrygian.get(0).toString());

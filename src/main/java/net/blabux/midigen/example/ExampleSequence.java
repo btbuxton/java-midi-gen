@@ -79,7 +79,7 @@ public class ExampleSequence {
 		int note16 = seq.getResolution() / 4;
 		long ticks = 0;
 		int[] rhythm = new int[] { 1, 1, 4, 2, 8, 8, 2, 4, 1, 1 };
-		List<Note> scale = Scale.MINOR_PENT.notes(Note.BY_NAME.get("E2"));
+		List<Note> scale = Scale.MINOR_PENT.notes(Note.named("E2"));
 		Collections.shuffle(scale);
 		Iterator<Note> notes = new RingIterator<>(scale);
 
