@@ -19,7 +19,7 @@ import net.blabux.midigen.common.RingIterator;
 import net.blabux.midigen.common.Scale;
 import net.blabux.midigen.midi.MidiUtil;
 import net.blabux.midigen.midi.SequenceRunner;
-import net.blabux.midigen.research.LFO;
+import net.blabux.midigen.research.LFOIterator;
 import net.blabux.midigen.research.TrackBuilder;
 
 public class ExampleSequence {
@@ -92,11 +92,12 @@ public class ExampleSequence {
 		}
 		track.placebo(ticks);
 		
-		LFO lfo = new LFO(seq.getResolution(), 0.25, 64, 64);
-		lfo.generate(track, 0, ticks - 1, 74);
-		LFO lfo2 = new LFO(seq.getResolution(), 0.75, 64, 64);
-		lfo2.generate(track, 0, ticks - 1, 7);
-		//LOG.info(String.format("ticks %d", track.ticks()));
+		Iterator<Integer> lfo = new LFOIterator(seq.getResolution(), 0.25, 64, 64);
+		Iterator<Integer> lfo2 = new LFOIterator(seq.getResolution(), 0.75, 96, 32);
+		for (int pulse = 0; pulse < ticks; pulse++) {
+			track.cc(pulse, 74, lfo.next());
+			track.cc(pulse, 7, lfo2.next());
+		}
 		return track.build();
 	}
 
