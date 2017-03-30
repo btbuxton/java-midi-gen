@@ -35,7 +35,6 @@ public class AltPulse {
 			try {
 				lock.wait();
 			} catch (InterruptedException e) {
-				
 			}
 		}
 		executor.shutdownNow();

@@ -19,6 +19,7 @@ import net.blabux.midigen.common.RingIterator;
 import net.blabux.midigen.common.Scale;
 import net.blabux.midigen.midi.MidiUtil;
 import net.blabux.midigen.midi.SequenceRunner;
+import net.blabux.midigen.research.LFO;
 import net.blabux.midigen.research.TrackBuilder;
 
 public class ExampleSequence {
@@ -86,10 +87,15 @@ public class ExampleSequence {
 		for (int noteLength : rhythm) {
 			Note next = notes.next();
 			int length = note16 * noteLength;
-			track.note(next, ticks, (long)(length * 0.5));
+			track.note(ticks, next, (long)(length * 0.5));
 			ticks += length;
 		}
 		track.placebo(ticks);
+		
+		LFO lfo = new LFO(seq.getResolution(), 0.25, 64, 64);
+		lfo.generate(track, 0, ticks - 1, 74);
+		LFO lfo2 = new LFO(seq.getResolution(), 0.75, 64, 64);
+		lfo2.generate(track, 0, ticks - 1, 7);
 		//LOG.info(String.format("ticks %d", track.ticks()));
 		return track.build();
 	}

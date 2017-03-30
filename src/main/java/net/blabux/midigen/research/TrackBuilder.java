@@ -18,27 +18,34 @@ public class TrackBuilder {
 		this.channel = channel;
 	}
 	
-	public void note(Note note, long when, long howLong) throws InvalidMidiDataException {
-		noteOn(note, when);
-		noteOff(note, when + howLong);
+	public void note(long when, Note note, long howLong) throws InvalidMidiDataException {
+		noteOn(when, note);
+		noteOff(when + howLong, note);
 	}
 	
-	public void noteOn(Note note, long when) throws InvalidMidiDataException {
+	public void noteOn(long when, Note note) throws InvalidMidiDataException {
 		MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, channel, note.getValue(), 100);
-		MidiEvent eventOn = new MidiEvent(msgOn, when);
-		track.add(eventOn);
+		add(when, msgOn);
 	}
 	
-	public void noteOff(Note note, long when) throws InvalidMidiDataException {
+	public void noteOff(long when, Note note) throws InvalidMidiDataException {
 		MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, channel, note.getValue(), 0);
-		MidiEvent eventOff = new MidiEvent(msgOff, when);
-		track.add(eventOff);
+		add(when, msgOff);
+	}
+	
+	public void cc(long when, int controlNumber, int value) throws InvalidMidiDataException {
+		MidiMessage msgCC = new ShortMessage(ShortMessage.CONTROL_CHANGE, channel, controlNumber, value);
+		add(when, msgCC);
 	}
 
 	public void placebo(long when) throws InvalidMidiDataException {
 		MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, channel, 0, 0);
-		MidiEvent eventOff = new MidiEvent(msgOff, when);
-		track.add(eventOff);
+		add(when, msgOff);
+	}
+
+	private void add(long when, MidiMessage msg) {
+		MidiEvent event = new MidiEvent(msg, when);
+		track.add(event);
 	}
 	
 	public Track build() {
