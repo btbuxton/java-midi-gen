@@ -94,9 +94,11 @@ public class ExampleSequence {
 		
 		Iterator<Integer> lfo = new LFOIterator(seq.getResolution(), 0.25, 64, 64);
 		Iterator<Integer> lfo2 = new LFOIterator(seq.getResolution(), 0.75, 96, 32);
+		Iterator<Integer> lfo3 = new LFOIterator(seq.getResolution(), 0.3333 / 2, 64, 32);
 		for (int pulse = 0; pulse < ticks; pulse++) {
 			track.cc(pulse, 74, lfo.next());
 			track.cc(pulse, 7, lfo2.next());
+			track.cc(pulse, 10, lfo3.next());
 		}
 		return track.build();
 	}
