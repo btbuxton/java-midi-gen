@@ -1,16 +1,14 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.midi.lfo;
 
-import static org.junit.Assert.*;
-
-import java.util.Iterator;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class LFOIteratorTest {
+public class LFOSineTest {
 
 	@Test
 	public void testOneCyclePerQuarterNote() {
-		Iterator<Integer> lfo = new LFOIterator(4, 1.0, 64, 64);
+		LFO lfo = new LFOSine(4, 1.0, 64, 64);
 		assertEquals((Integer)64, lfo.next());
 		assertEquals((Integer)127, lfo.next());
 		assertEquals((Integer)64, lfo.next());
@@ -20,7 +18,7 @@ public class LFOIteratorTest {
 	
 	@Test
 	public void testOneCyclesPerHalfNote() {
-		Iterator<Integer> lfo = new LFOIterator(4, 0.5, 64, 64);
+		LFO lfo = new LFOSine(4, 0.5, 64, 64);
 		assertEquals((Integer)64, lfo.next());
 		assertEquals((Integer)109, lfo.next());
 		assertEquals((Integer)127, lfo.next());
@@ -30,7 +28,7 @@ public class LFOIteratorTest {
 	
 	@Test
 	public void testOneCyclesPerQuarterNoteEightPulses() {
-		Iterator<Integer> lfo = new LFOIterator(8, 1.0, 64, 64);
+		LFO lfo = new LFOSine(8, 1.0, 64, 64);
 		assertEquals((Integer)64, lfo.next());
 		assertEquals((Integer)109, lfo.next());
 		assertEquals((Integer)127, lfo.next());

@@ -1,16 +1,12 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.midi.lfo;
 
-import java.util.Iterator;
-
-public class LFOIterator implements Iterator<Integer> {
+public class LFOSine extends LFOAbstract {
 	final int center; // center of LFO
 	final int depth;
 	final double radStep;
 	double phase;
 	
-	
-
-	public LFOIterator(long ppq, double cpq, int center, int depth) {
+	public LFOSine(long ppq, double cpq, int center, int depth) {
 		this.center = center;
 		this.depth = depth;
 		double degStep = 360.0 * cpq / ppq;
@@ -19,14 +15,9 @@ public class LFOIterator implements Iterator<Integer> {
 	}
 
 	@Override
-	public boolean hasNext() {
-		return true;
-	}
-
-	@Override
 	public Integer next() {
 		int value = (int)Math.round(center + (depth * Math.sin(phase)));
 		phase += radStep;
-		return Math.min(127, Math.max(0, value));
+		return scrub(value);
 	}
 }
