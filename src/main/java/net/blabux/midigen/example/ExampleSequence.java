@@ -21,7 +21,7 @@ import net.blabux.midigen.midi.MidiUtil;
 import net.blabux.midigen.midi.SequenceRunner;
 import net.blabux.midigen.midi.lfo.LFO;
 import net.blabux.midigen.midi.lfo.LFOSine;
-import net.blabux.midigen.research.TrackBuilder;
+import net.blabux.midigen.research.TrackWrapper;
 
 public class ExampleSequence {
 	private static final Logger LOG = Logger.getLogger(ExampleSequence.class.getName());
@@ -77,7 +77,7 @@ public class ExampleSequence {
 	}
 
 	private Track createTrack(Sequence seq) throws InvalidMidiDataException {
-		TrackBuilder track = new TrackBuilder(seq,0);
+		TrackWrapper track = new TrackWrapper(seq,0);
 		int note16 = seq.getResolution() / 4;
 		long ticks = 0;
 		int[] rhythm = new int[] { 1, 1, 4, 2, 8, 8, 2, 4, 1, 1 };

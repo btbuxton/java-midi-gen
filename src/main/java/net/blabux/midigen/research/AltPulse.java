@@ -1,4 +1,4 @@
-package net.blabux.midigen.midi;
+package net.blabux.midigen.research;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

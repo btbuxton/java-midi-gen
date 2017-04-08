@@ -9,11 +9,11 @@ import javax.sound.midi.Track;
 
 import net.blabux.midigen.common.Note;
 
-public class TrackBuilder {
+public class TrackWrapper {
 	private final Track track;
 	private final int channel;
 
-	public TrackBuilder(Sequence seq, int channel) {
+	public TrackWrapper(Sequence seq, int channel) {
 		this.track = seq.createTrack();
 		this.channel = channel;
 	}
