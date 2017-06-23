@@ -1,4 +1,4 @@
-package net.blabux.midigen.midi;
+package net.blabux.midigen.midi.fixed;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;

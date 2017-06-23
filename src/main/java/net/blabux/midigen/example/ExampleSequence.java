@@ -18,10 +18,10 @@ import net.blabux.midigen.common.Note;
 import net.blabux.midigen.common.RingIterator;
 import net.blabux.midigen.common.Scale;
 import net.blabux.midigen.midi.MidiUtil;
-import net.blabux.midigen.midi.SequenceRunner;
+import net.blabux.midigen.midi.fixed.SequenceRunner;
+import net.blabux.midigen.midi.fixed.TrackWrapper;
 import net.blabux.midigen.midi.lfo.LFO;
 import net.blabux.midigen.midi.lfo.LFOSine;
-import net.blabux.midigen.research.TrackWrapper;
 
 public class ExampleSequence {
 	private static final Logger LOG = Logger.getLogger(ExampleSequence.class.getName());
