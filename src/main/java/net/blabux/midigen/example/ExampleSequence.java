@@ -39,45 +39,39 @@ public class ExampleSequence {
 	private MidiDevice getMidiDevice() {
 		String toFind = System.getProperty("midiReceiver", "UM1");
 		LOG.info("midiReceiver property set to: '" + toFind + "'");
-//		for (String name : MidiUtil.getMidiReceiverNames()) {
-//			LOG.info("Possible midi device: " + name);
-//		}
+		for (String name : MidiUtil.getMidiReceiverNames()) {
+			LOG.info("Possible midi device: " + name);
+		}
 		MidiDevice result = MidiUtil.getMidiReceiversContainingNameOrDefault(toFind);
 		LOG.info("Using midi device: " + result.getDeviceInfo().getName());
 		return result;
 	}
 
 	private void run() throws MidiUnavailableException, InvalidMidiDataException {
-		MidiDevice device = getMidiDevice();
-		device.open();
-		try {
+		try (MidiDevice device = getMidiDevice()) {
+			device.open();
 			run(device);
-		} finally {
-			device.close();
 		}
 	}
 
 	private void run(MidiDevice device) throws MidiUnavailableException, InvalidMidiDataException {
-		Receiver rec = device.getReceiver();
-		SequenceRunner runner = new SequenceRunner(rec, 96f);
-		try {
+		try (Receiver rec = device.getReceiver()) {
+			final SequenceRunner runner = new SequenceRunner(rec, 96f);
 			runner.loop(new InfiniteIterable<Sequence>(() -> {
 				try {
 					LOG.info(String.format("Tempo: %s", String.valueOf(runner.getTempoBPM())));
 					Sequence seq = new Sequence(Sequence.PPQ, PPQ);
 					createTrack(seq);
 					return seq;
-				} catch(InvalidMidiDataException ex) {
+				} catch (InvalidMidiDataException ex) {
 					throw new IllegalStateException(ex);
 				}
 			}));
-		} finally {
-			rec.close();
 		}
 	}
 
 	private Track createTrack(Sequence seq) throws InvalidMidiDataException {
-		TrackWrapper track = new TrackWrapper(seq,0);
+		TrackWrapper track = new TrackWrapper(seq, 0);
 		int note16 = seq.getResolution() / 4;
 		long ticks = 0;
 		int[] rhythm = new int[] { 1, 1, 4, 2, 8, 8, 2, 4, 1, 1 };
@@ -88,11 +82,11 @@ public class ExampleSequence {
 		for (int noteLength : rhythm) {
 			Note next = notes.next();
 			int length = note16 * noteLength;
-			track.note(ticks, next, (long)(length * 0.5));
+			track.note(ticks, next, (long) (length * 0.5));
 			ticks += length;
 		}
 		track.placebo(ticks);
-		
+
 		LFO lfo = new LFOSine(seq.getResolution(), 0.25, 64, 64);
 		LFO lfo2 = new LFOSine(seq.getResolution(), 0.75, 96, 32);
 		LFO lfo3 = new LFOSine(seq.getResolution(), 0.3333 / 2, 64, 32);

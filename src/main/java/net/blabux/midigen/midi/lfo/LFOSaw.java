@@ -20,7 +20,7 @@ public class LFOSaw extends LFOAbstract {
 		start = center - depth;
 		length = Math.round(ppq / cpq);
 		slope = (double) (2 * depth) / (length - 1);
-		index = length / 2;
+		index = rise ? 0 : length - 1;
 		dir = rise ? 1 : -1;
 	}
 

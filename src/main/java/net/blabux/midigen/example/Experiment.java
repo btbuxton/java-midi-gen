@@ -6,7 +6,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
 import net.blabux.midigen.midi.MidiUtil;
-import net.blabux.midigen.midi.Pulse;
+import net.blabux.midigen.midi.realtime.Pulse;
 
 public class Experiment {
 	private static final int NOW = -1;
