@@ -21,6 +21,7 @@ public class Pulse {
 	private volatile double tempoBPM;
 	private volatile double mspp;
 	private volatile long start;
+	
 
 	public Pulse() {
 		this(DEFAULT_TEMPO_BPM);
@@ -30,7 +31,11 @@ public class Pulse {
 		setTempoBPM(bpm);
 	}
 
-	public void pulse(final Function<Long, Boolean> pulseFunc) {
+	public long ticks(double beats) {
+		return (long)(beats * PPQ);
+	}
+	
+	public void run(final Function<Long, Boolean> pulseFunc) {
 		long tick = 0;
 		long timeTick = 0;
 		long tickEnd;
@@ -64,22 +69,25 @@ public class Pulse {
 		final java.util.concurrent.atomic.AtomicInteger count = new java.util.concurrent.atomic.AtomicInteger(0);
 		final Pulse gen = new Pulse();
 		//creation of function take 150-200ms ?!
+		final long one_min = gen.ticks(120);
+		//2 minutes = 240 beats @ 120 bpm
+		//2 minutes = 120 beats @ 120 bpm + 240 beats @ 240 bpm
+		final long two_min = gen.ticks(360);
 		Function<Long, Boolean> pulseFunc = (tick) -> {
 			if (count.getAndIncrement() < 5) {
 				System.out.print(tick);
 				System.out.print(' ');
 				System.out.println(System.currentTimeMillis() - begin.get());
 			}
-			if (tick == (PPQ * 120)) {
+			if (tick == one_min) {
 				System.out.println("double time!");
 				gen.setTempoBPM(240.0); //double time
 			}
-			//2 minutes = 240 beats @ 120 bpm
-			//2 minutes = 120 beats @ 120 bpm + 240 beats @ 240 bpm
-			return tick < (PPQ * 360);
+			
+			return tick < two_min;
 		};
 		begin.set(System.currentTimeMillis());
-		gen.pulse(pulseFunc);
+		gen.run(pulseFunc);
 		long end = System.currentTimeMillis();
 		System.out.println(end - begin.get());
 	}

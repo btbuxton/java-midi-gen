@@ -18,7 +18,7 @@ public class Experiment {
 			device.open();
 			try {
 				final MidiMessage msg = new ShortMessage(ShortMessage.TIMING_CLOCK);
-				new Pulse(240.0).pulse((tick) -> {
+				new Pulse(240.0).run((tick) -> {
 					recvr.send(msg, NOW);
 					return tick < (24 * 120);
 				}); 
