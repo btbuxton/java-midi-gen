@@ -17,9 +17,10 @@ public class Pulse {
 	private static final long INITIAL_START_VALUE = -1;
 	private static final double DEFAULT_TEMPO_BPM = 120.0;
 	private static final int PPQ = 24;
+	private static final long NANOS_PER_MS = (long)Math.pow(10,6);
 
 	private volatile double tempoBPM;
-	private volatile double mspp;
+	private volatile double nspp;
 	private volatile long start;
 	
 
@@ -41,12 +42,12 @@ public class Pulse {
 		long tickEnd;
 		while(pulseFunc.apply(tick++)) {
 			timeTick = start == INITIAL_START_VALUE ? 0 : timeTick;
-			start = start == INITIAL_START_VALUE ? System.currentTimeMillis() : start;
-			tickEnd = System.currentTimeMillis();
-			long diff = Math.round(((++timeTick) * mspp) - tickEnd + start);
+			start = start == INITIAL_START_VALUE ? System.nanoTime() : start;
+			tickEnd = System.nanoTime();
+			long diff = Math.round(((++timeTick) * nspp) - tickEnd + start);
 			if (diff > 0) {
 				try {
-					Thread.sleep(diff);
+					Thread.sleep(diff / NANOS_PER_MS, (int)(diff % NANOS_PER_MS));
 				} catch (InterruptedException e) {
 					break;
 				}
@@ -56,7 +57,7 @@ public class Pulse {
 
 	public void setTempoBPM(double bpm) {
 		tempoBPM = bpm;
-		mspp = 60.0 / PPQ / tempoBPM * 1000;
+		nspp = 60.0 / PPQ / tempoBPM * 1000 * NANOS_PER_MS;
 		start = INITIAL_START_VALUE;
 	}
 
