@@ -2,7 +2,6 @@ package net.blabux.midigen.midi.realtime;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
@@ -31,38 +30,43 @@ public class Arp {
 		this.nextTickOff = Long.MAX_VALUE;
 	}
 
-	public void tick(Receiver recv, Pulse pulse, long tick) {
+	public boolean tick(Receiver recv, PulseGen pulse, long tick) {
 		try {
 			if (tick >= nextTickOn) {
 				currentNote = ring.next();
 				final MidiMessage noteOn = new ShortMessage(ShortMessage.NOTE_ON, 0, currentNote.getValue(), 100);
 				recv.send(noteOn, -1);
 				nextTickOff = tick + pulse.ticks(gateLength) - 1;
-				nextTickOn = tick + pulse.ticks(noteLength) - 1;
+				nextTickOn = tick + pulse.ticks(noteLength);
+				System.out.println("note on");
 			} else if (tick >= nextTickOff) {
-				final MidiMessage noteOn = new ShortMessage(ShortMessage.NOTE_OFF, 0, currentNote.getValue(), 0);
-				recv.send(noteOn, -1);
+				final MidiMessage noteOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, currentNote.getValue(), 0);
+				recv.send(noteOff, -1);
 				nextTickOff = Long.MAX_VALUE;
+				System.out.println("note off");
+				return false;
 			}
 		} catch (InvalidMidiDataException ex) {
 			throw new RuntimeException(ex);
 		}
+		return true;
 	}
 
 	public static void main(String[] args) {
 		Arp arp = defaultArp();
 		try {
+			MidiUtil.getMidiReceiverNames().forEach(System.out::println);
 			final MidiDevice device = MidiUtil.getMidiReceiversContainingNameOrDefault(System.getProperty("recv", ""));
+			System.out.println("Using: " + device.getDeviceInfo().getName());
 			device.open();
 			try {
-				System.out.println("Using: " + device.getDeviceInfo().getName());
 				try (final Receiver recv = device.getReceiver()) {
-					final Pulse pulse = new Pulse(120);
+					final PulseGen pulse = new PulseGen(120, 240);
 					final long one_min = pulse.ticks(120);
-					Function<Long, Boolean> pulseAccept = (tick) -> {
-						sendClock(recv);
-						arp.tick(recv, pulse, tick);
-						return tick < one_min;
+					final Clock clock = new Clock(recv, pulse);
+					PulseFunc pulseAccept = (tick) -> {
+						clock.pulse(tick);
+						return arp.tick(recv, pulse, tick) || tick < one_min;
 					};
 					try {
 						pulse.run(pulseAccept);
@@ -77,16 +81,6 @@ public class Arp {
 			ex.printStackTrace();
 		}
 		System.out.println("Done!");
-	}
-
-	private static void sendClock(final Receiver recv) {
-		try {
-			MidiMessage msg = new ShortMessage(ShortMessage.TIMING_CLOCK);
-			recv.send(msg, -1);
-		} catch (InvalidMidiDataException e) {
-			throw new RuntimeException(e);
-		}
-
 	}
 
 	private static void allNotesOff(final Receiver recv) {

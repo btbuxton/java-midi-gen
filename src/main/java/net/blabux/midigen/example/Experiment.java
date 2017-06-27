@@ -6,7 +6,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
 import net.blabux.midigen.midi.MidiUtil;
-import net.blabux.midigen.midi.realtime.Pulse;
+import net.blabux.midigen.midi.realtime.PulseGen;
 
 public class Experiment {
 	private static final int NOW = -1;
@@ -18,7 +18,7 @@ public class Experiment {
 			device.open();
 			try {
 				final MidiMessage msg = new ShortMessage(ShortMessage.TIMING_CLOCK);
-				new Pulse(240.0).run((tick) -> {
+				new PulseGen(240.0).run((long tick) -> {
 					recvr.send(msg, NOW);
 					return tick < (24 * 120);
 				}); 
