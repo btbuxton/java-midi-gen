@@ -28,7 +28,7 @@ public class Clock implements PulseFunc {
 		if (tick % pulsesToWait == 0) {
 			sendClock();
 		}
-		return false;
+		return true;
 	}
 
 	private void sendClock() {

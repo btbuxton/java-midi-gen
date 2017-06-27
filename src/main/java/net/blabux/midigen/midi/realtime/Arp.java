@@ -63,13 +63,12 @@ public class Arp {
 				try (final Receiver recv = device.getReceiver()) {
 					final PulseGen pulse = new PulseGen(120, 240);
 					final long one_min = pulse.ticks(120);
-					final Clock clock = new Clock(recv, pulse);
 					PulseFunc pulseAccept = (tick) -> {
-						clock.pulse(tick);
 						return arp.tick(recv, pulse, tick) || tick < one_min;
 					};
+					final Clock clock = new Clock(recv, pulse);
 					try {
-						pulse.run(pulseAccept);
+						pulse.run(clock.andThen(pulseAccept));
 					} finally {
 						allNotesOff(recv);
 					}
@@ -83,6 +82,10 @@ public class Arp {
 		System.out.println("Done!");
 	}
 
+	/**
+	 * This doesn't work....grrrr
+	 * @param recv
+	 */
 	private static void allNotesOff(final Receiver recv) {
 		try {
 			MidiMessage msg = new ShortMessage(ShortMessage.CONTROL_CHANGE, 123, 0);
