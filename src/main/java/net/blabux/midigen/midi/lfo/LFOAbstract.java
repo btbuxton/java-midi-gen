@@ -4,7 +4,7 @@ public abstract class LFOAbstract implements LFO {
 	final int center;
 	final int depth;
 
-	//This does nothing, but's to keep everything consistent
+	//This does nothing, but is to keep everything consistent
 	public LFOAbstract(long ppq, double cpq, int center, int depth) {
 		this.center = center;
 		this.depth = depth;

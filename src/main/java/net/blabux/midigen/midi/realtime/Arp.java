@@ -17,12 +17,14 @@ public class Arp {
 	private final RingIterator<Note> ring;
 	private final double noteLength;
 	private final double gateLength;
+	private final Channel channel;
 
 	private long nextTickOn;
 	private long nextTickOff;
 	private Note currentNote;
 
-	public Arp(List<Note> notes, double noteLengthInBeats, double gatePercentage) {
+	public Arp(Channel channel, List<Note> notes, double noteLengthInBeats, double gatePercentage) {
+		this.channel = channel;
 		this.ring = new RingIterator<>(notes);
 		this.noteLength = noteLengthInBeats;
 		this.gateLength = noteLengthInBeats * gatePercentage;
@@ -30,30 +32,24 @@ public class Arp {
 		this.nextTickOff = Long.MAX_VALUE;
 	}
 
-	public boolean tick(Receiver recv, PulseGen pulse, long tick) {
-		try {
-			if (tick >= nextTickOn) {
-				currentNote = ring.next();
-				final MidiMessage noteOn = new ShortMessage(ShortMessage.NOTE_ON, 0, currentNote.getValue(), 100);
-				recv.send(noteOn, -1);
-				nextTickOff = tick + pulse.ticks(gateLength) - 1;
-				nextTickOn = tick + pulse.ticks(noteLength);
-				System.out.println("note on");
-			} else if (tick >= nextTickOff) {
-				final MidiMessage noteOff = new ShortMessage(ShortMessage.NOTE_OFF, 0, currentNote.getValue(), 0);
-				recv.send(noteOff, -1);
-				nextTickOff = Long.MAX_VALUE;
-				System.out.println("note off");
-				return false;
-			}
-		} catch (InvalidMidiDataException ex) {
-			throw new RuntimeException(ex);
+	public boolean tick(PulseGen pulse, long tick) {
+		if (tick >= nextTickOn) {
+			currentNote = ring.next();
+			channel.noteOn(currentNote, 100);
+			nextTickOff = tick + pulse.ticks(gateLength) - 1;
+			nextTickOn = tick + pulse.ticks(noteLength);
+			System.out.println("note on");
+		} else if (tick >= nextTickOff) {
+			channel.noteOff(currentNote);
+			nextTickOff = Long.MAX_VALUE;
+			System.out.println("note off");
+			return false;
 		}
 		return true;
 	}
 
 	public static void main(String[] args) {
-		Arp arp = defaultArp();
+		
 		try {
 			MidiUtil.getMidiReceiverNames().forEach(System.out::println);
 			final MidiDevice device = MidiUtil.getMidiReceiversContainingNameOrDefault(System.getProperty("recv", ""));
@@ -61,10 +57,14 @@ public class Arp {
 			device.open();
 			try {
 				try (final Receiver recv = device.getReceiver()) {
-					final PulseGen pulse = new PulseGen(120, 240);
+					Channel channel = new Channel(recv, 0);
+					Arp arp = defaultArp(channel);
+					final PulseGen pulse = new PulseGen(120, 240); /// run arp @
+																	/// 120 bpm,
+																	/// 240 ppq
 					final long one_min = pulse.ticks(120);
 					PulseFunc pulseAccept = (tick) -> {
-						return arp.tick(recv, pulse, tick) || tick < one_min;
+						return arp.tick(pulse, tick) || tick < one_min;
 					};
 					final Clock clock = new Clock(recv, pulse);
 					try {
@@ -84,6 +84,7 @@ public class Arp {
 
 	/**
 	 * This doesn't work....grrrr
+	 * 
 	 * @param recv
 	 */
 	private static void allNotesOff(final Receiver recv) {
@@ -96,9 +97,9 @@ public class Arp {
 
 	}
 
-	private static Arp defaultArp() {
+	private static Arp defaultArp(Channel channel) {
 		List<Note> notes = Arrays.asList(Note.named("G3"), Note.named("B3"), Note.named("D4"));
-		return new Arp(notes, 0.5, 0.5); // straight 1/8th notes gated to be
+		return new Arp(channel, notes, 0.5, 0.5); // straight 1/8th notes gated to be
 											// 1/16th
 	}
 }
