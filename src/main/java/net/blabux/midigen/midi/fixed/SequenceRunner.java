@@ -9,7 +9,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
-public class SequenceRunner {
+public class SequenceRunner implements AutoCloseable {
 	private static final int END_OF_TRACK = 0x2F;
 
 	private final Receiver receiver;
@@ -17,17 +17,18 @@ public class SequenceRunner {
 	private float tempoBPM;
 	private Sequencer sequencer;
 
-	public SequenceRunner(Receiver receiver) {
+	public SequenceRunner(Receiver receiver) throws MidiUnavailableException {
 		this(receiver, 120.0f);
 	}
-	
-	public SequenceRunner(Receiver receiver, float tempoBPM) {
+
+	public SequenceRunner(Receiver receiver, float tempoBPM) throws MidiUnavailableException {
 		this.receiver = receiver;
 		this.lock = new Object();
 		this.tempoBPM = tempoBPM;
+		open();
 	}
-	
-	public void open() throws MidiUnavailableException {
+
+	private void open() throws MidiUnavailableException {
 		sequencer = createSequencer();
 	}
 
@@ -49,20 +50,15 @@ public class SequenceRunner {
 	}
 
 	public void loop(Iterable<Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {
-		open();
-		try {
-			for (Sequence seq : sequences) {
-				play(seq);
-			}
-		} finally {
-			close();
+		for (Sequence seq : sequences) {
+			play(seq);
 		}
 	}
-	
+
 	public void setTempoBPM(float newTempo) {
 		this.tempoBPM = newTempo;
 	}
-	
+
 	public float getTempoBPM() {
 		return tempoBPM;
 	}

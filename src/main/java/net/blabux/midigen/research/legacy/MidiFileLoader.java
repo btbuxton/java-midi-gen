@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.research.legacy;
 
 import java.io.IOException;
 import java.net.URL;

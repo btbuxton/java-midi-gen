@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.research.context;
 
 import net.blabux.midigen.common.NoteName;
 
@@ -13,6 +13,6 @@ import net.blabux.midigen.common.NoteName;
  */
 public class MusicContext {
 	NoteName root; //just care about the name
-	Chord hamrony;
+	Chord harmony;
 	
 }

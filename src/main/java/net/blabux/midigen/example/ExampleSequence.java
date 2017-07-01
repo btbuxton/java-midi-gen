@@ -56,17 +56,18 @@ public class ExampleSequence {
 
 	private void run(MidiDevice device) throws MidiUnavailableException, InvalidMidiDataException {
 		try (Receiver rec = device.getReceiver()) {
-			final SequenceRunner runner = new SequenceRunner(rec, 96f);
-			runner.loop(new InfiniteIterable<Sequence>(() -> {
-				try {
-					LOG.info(String.format("Tempo: %s", String.valueOf(runner.getTempoBPM())));
-					Sequence seq = new Sequence(Sequence.PPQ, PPQ);
-					createTrack(seq);
-					return seq;
-				} catch (InvalidMidiDataException ex) {
-					throw new IllegalStateException(ex);
-				}
-			}));
+			try (final SequenceRunner runner = new SequenceRunner(rec, 96f)) {
+				runner.loop(new InfiniteIterable<Sequence>(() -> {
+					try {
+						LOG.info(String.format("Tempo: %s", String.valueOf(runner.getTempoBPM())));
+						Sequence seq = new Sequence(Sequence.PPQ, PPQ);
+						createTrack(seq);
+						return seq;
+					} catch (InvalidMidiDataException ex) {
+						throw new IllegalStateException(ex);
+					}
+				}));
+			}
 		}
 	}
 
