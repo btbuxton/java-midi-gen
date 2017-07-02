@@ -56,6 +56,10 @@ public class CurrentState {
 	public List<Note> getAllNotes() {
 		return playing.stream().flatMap((each) -> each.keySet().stream()).collect(Collectors.toList());
 	}
+	
+	public List<Map.Entry<Note,Integer>> getAllNotesAndVelocities() {
+		return playing.stream().flatMap((each) -> each.entrySet().stream()).collect(Collectors.toList());
+	}
 
 
 	void setLength(long tickLength) {
