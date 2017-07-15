@@ -27,4 +27,11 @@ public class PitchBend {
 		double decimal = equalTempNote - midiNote;
 		amount = (int)((decimal * 8192) + 8192) % 16384;
 	}
+	
+	byte[] getAmountForMidiPB() {
+		byte[] result = new byte[2];
+		result[0] = (byte)(amount & 0x7F);
+		result[1] = (byte)((amount >> 7) & 0x7F);
+		return result;
+	}
 }

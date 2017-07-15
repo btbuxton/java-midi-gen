@@ -45,4 +45,21 @@ public class PitchBendTest {
 		assertEquals(78, pb.midiNote);
 		assertEquals(8192, pb.amount);
 	}
+	
+	@Test
+	public void getAmountForMidiPB() {
+		double freq = 440 * 3 / 2; //perfect fifth
+		PitchBend pb = new PitchBend(freq);
+		byte[] amount = pb.getAmountForMidiPB();
+		assertEquals(0x20, amount[0]);
+		assertEquals(0x41, amount[1]);
+	}
+	
+	@Test
+	public void getAmountForMidiPBCenter() {
+		PitchBend pb = new PitchBend(440);
+		byte[] amount = pb.getAmountForMidiPB();
+		assertEquals(0x00, amount[0]);
+		assertEquals(0x40, amount[1]);
+	}
 }
