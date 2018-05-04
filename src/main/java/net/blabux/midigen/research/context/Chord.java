@@ -2,8 +2,8 @@ package net.blabux.midigen.research.context;
 
 /**
  * Experimental class to handle chords
- * @author btbuxton
  *
+ * @author btbuxton
  */
 public class Chord {
 

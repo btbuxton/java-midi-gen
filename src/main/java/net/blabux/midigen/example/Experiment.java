@@ -1,27 +1,27 @@
 package net.blabux.midigen.example;
 
+import net.blabux.midigen.midi.MidiUtil;
+import net.blabux.midigen.midi.realtime.PulseGen;
+
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
-import net.blabux.midigen.midi.MidiUtil;
-import net.blabux.midigen.midi.realtime.PulseGen;
-
 public class Experiment {
-	private static final int NOW = -1;
+    private static final int NOW = -1;
 
-	public static void main(String[] args) {
-		try {
-			MidiDevice device = MidiUtil.getMidiReceiversContainingNameOrDefault("electribe2");
-			Receiver recvr = device.getReceiver();
-			device.open();
-			try {
-				final MidiMessage msg = new ShortMessage(ShortMessage.TIMING_CLOCK);
-				new PulseGen(240.0).run((long tick) -> {
-					recvr.send(msg, NOW);
-					return tick < (24 * 120);
-				}); 
+    public static void main(String[] args) {
+        try {
+            MidiDevice device = MidiUtil.getMidiReceiversContainingNameOrDefault("electribe2");
+            Receiver recvr = device.getReceiver();
+            device.open();
+            try {
+                final MidiMessage msg = new ShortMessage(ShortMessage.TIMING_CLOCK);
+                new PulseGen(240.0).run((long tick) -> {
+                    recvr.send(msg, NOW);
+                    return tick < (24 * 120);
+                });
 				/*
 				Note d2 = Note.BY_NAME.get("D2");
 				MidiMessage msg = new ShortMessage(ShortMessage.NOTE_ON, 0, d2.getValue(), 96);
@@ -29,13 +29,13 @@ public class Experiment {
 				Thread.sleep(500);
 				msg = new ShortMessage(ShortMessage.NOTE_OFF, 0, d2.getValue(), 96);
 				*/
-			} finally {
-				recvr.close();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+            } finally {
+                recvr.close();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
-	}
+    }
 
 }

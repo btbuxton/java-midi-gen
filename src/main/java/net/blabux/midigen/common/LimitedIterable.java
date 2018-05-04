@@ -9,24 +9,24 @@ import java.util.LinkedList;
  * size. It will grow until it reaches the length sent to the constructor
  */
 public class LimitedIterable<T> implements Iterable<T> {
-	final LinkedList<T> internal;
-	final int length;
-	int position;
+    final LinkedList<T> internal;
+    final int length;
+    int position;
 
-	public LimitedIterable(int length) {
-		this.length = length;
-		this.internal = new LinkedList<T>();
-		this.position = -1;
-	}
+    public LimitedIterable(int length) {
+        this.length = length;
+        this.internal = new LinkedList<T>();
+        this.position = -1;
+    }
 
-	public void add(T item) {
-		internal.addLast(item);
-		if (internal.size() > length) {
-			internal.removeFirst();
-		}
-	}
+    public void add(T item) {
+        internal.addLast(item);
+        if (internal.size() > length) {
+            internal.removeFirst();
+        }
+    }
 
-	public Iterator<T> iterator() {
-		return internal.iterator();
-	}
+    public Iterator<T> iterator() {
+        return internal.iterator();
+    }
 }

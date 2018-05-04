@@ -1,106 +1,100 @@
 package net.blabux.midigen.common;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class Note {
-	public final static List<Note> ALL;
-	
-	private final static Pattern NAME_PARTS = Pattern.compile("^([A-G][sf\\#]?)(\\-?[0-9])$");
+    public final static List<Note> ALL;
 
-	private final NoteName name;
-	private final int value;
-	private final int octave;
+    private final static Pattern NAME_PARTS = Pattern.compile("^([A-G][sf\\#]?)(\\-?[0-9])$");
 
-	static {
-		List<Note> all = create();
-		Map<String, Note> nameMapping = new HashMap<>(128);
-		for (Note each : all) {
-			nameMapping.put(each.toString(), each);
-		}
-		ALL = Collections.unmodifiableList(all);
-	}
-	
-	public static Note named(String name) {
-		Matcher matcher = NAME_PARTS.matcher(name);
-		if (!matcher.find()) {
-			throw new IllegalArgumentException("Invalid name: " + name);
-		}
-		NoteName noteName = NoteName.get(matcher.group(1));
-		int octave = Integer.parseInt(matcher.group(2));
-		return noteName.note(octave);
-	}
+    private final NoteName name;
+    private final int value;
+    private final int octave;
 
-	private static List<Note> create() {
-		List<Note> result = new ArrayList<>(128);
-		int octave = -2;
-		Iterable<NoteName> names = Arrays.asList(NoteName.values());
-		Iterator<NoteName> namesIter = names.iterator();
-		for (short value = 0; value < 128; value++) {
-			if (!namesIter.hasNext()) {
-				namesIter = names.iterator();
-				octave++;
-			}
-			NoteName name = namesIter.next();
-			result.add(new Note(name, octave, value));
-		}
-		return result;
-	}
+    static {
+        List<Note> all = create();
+        Map<String, Note> nameMapping = new HashMap<>(128);
+        for (Note each : all) {
+            nameMapping.put(each.toString(), each);
+        }
+        ALL = Collections.unmodifiableList(all);
+    }
 
-	private Note(NoteName name, int octave, int value) {
-		this.name = name;
-		this.octave = octave;
-		this.value = value;
-	}
+    public static Note named(String name) {
+        Matcher matcher = NAME_PARTS.matcher(name);
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Invalid name: " + name);
+        }
+        NoteName noteName = NoteName.get(matcher.group(1));
+        int octave = Integer.parseInt(matcher.group(2));
+        return noteName.note(octave);
+    }
 
-	public NoteName getName() {
-		return name;
-	}
+    private static List<Note> create() {
+        List<Note> result = new ArrayList<>(128);
+        int octave = -2;
+        Iterable<NoteName> names = Arrays.asList(NoteName.values());
+        Iterator<NoteName> namesIter = names.iterator();
+        for (short value = 0; value < 128; value++) {
+            if (!namesIter.hasNext()) {
+                namesIter = names.iterator();
+                octave++;
+            }
+            NoteName name = namesIter.next();
+            result.add(new Note(name, octave, value));
+        }
+        return result;
+    }
 
-	public int getOctave() {
-		return octave;
-	}
+    private Note(NoteName name, int octave, int value) {
+        this.name = name;
+        this.octave = octave;
+        this.value = value;
+    }
 
-	public int getValue() {
-		return value;
-	}
+    public NoteName getName() {
+        return name;
+    }
 
-	public Note octaveUp() {
-		return Note.ALL.get(getValue() + 12);
-	}
+    public int getOctave() {
+        return octave;
+    }
 
-	public Note octaveDown() {
-		return Note.ALL.get(getValue() - 12);
-	}
+    public int getValue() {
+        return value;
+    }
 
-	@Override
-	public int hashCode() {
-		return getValue();
-	}
+    public Note octaveUp() {
+        return Note.ALL.get(getValue() + 12);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		try {
-			return equals((Note) obj);
-		} catch (ClassCastException ex) {
-			return false;
-		}
-	}
+    public Note octaveDown() {
+        return Note.ALL.get(getValue() - 12);
+    }
 
-	public boolean equals(Note another) {
-		return getValue() == another.getValue();
-	}
+    @Override
+    public int hashCode() {
+        return getValue();
+    }
 
-	public String toString() {
-		return getName() + String.valueOf(getOctave());
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            return equals((Note) obj);
+        } catch (ClassCastException ex) {
+            return false;
+        }
+    }
 
-	}
+    public boolean equals(Note another) {
+        return getValue() == another.getValue();
+    }
+
+    public String toString() {
+        return getName() + String.valueOf(getOctave());
+
+    }
 }

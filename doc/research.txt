@@ -1,0 +1,136 @@
+//https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/mapping-and-modding-tutorials/1571330-better-java-midi-instrument-sounds-for-linux
+//Load custom sf2 soundfonts
+    public Synthesizer synth;
+    private Soundbank sbDefault;
+    private Soundbank sbDeluxe;
+
+    try{
+    synth = MidiSystem.getSynthesizer();
+    synth.open();
+    }
+    catch ( MidiUnavailableException e1) { e1.printStackTrace(); }
+
+    sbDefault = gSynth.getDefaultSoundbank();
+    synth.unloadAllInstruments( sbDefault );
+
+    File file = new File( "/home/someuser/.gervill/SuperDuper.sf2" ); // or maybe Wonderful.dls
+    try { sbDeluxe = MidiSystem.getSoundbank(file); }
+    catch (Exception e) { e.printStackTrace(); }
+
+    synth.loadAllInstruments( sbDeluxe);
+
+    public Sequencer seqr;
+    try{
+    seqr = MidiSystem.getSequencer() ;
+    seqr.open() ;
+    seqr.getTransmitter().setReceiver( synth.getReceiver() ) ;
+    }
+    catch (Exception e) { /*fail code*/ }
+
+//Clojure: https://taylodl.wordpress.com/2014/01/21/making-music-with-clojure-an-introduction-to-midi/
+//FluidR3 sf2 https://www.kvraudio.com/forum/viewtopic.php?t=357783
+// sound recording for sequence?
+//http://www.codejava.net/coding/capture-and-record-sound-into-wav-file-with-java-sound-api
+import javax.sound.sampled.*;
+import java.io.*;
+
+/**
+ * A sample program is to demonstrate how to record sound in Java
+ * author: www.codejava.net
+ */
+public class JavaSoundRecorder {
+    // record duration, in milliseconds
+    static final long RECORD_TIME = 60000;  // 1 minute
+
+    // path of the wav file
+    File wavFile = new File("E:/Test/RecordAudio.wav");
+
+    // format of audio file
+    AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE;
+
+    // the line from which audio data is captured
+    TargetDataLine line;
+
+    /**
+     * Defines an audio format
+     */
+    AudioFormat getAudioFormat() {
+        float sampleRate = 16000;
+        int sampleSizeInBits = 8;
+        int channels = 2;
+        boolean signed = true;
+        boolean bigEndian = true;
+        AudioFormat format = new AudioFormat(sampleRate, sampleSizeInBits,
+                                             channels, signed, bigEndian);
+        return format;
+    }
+
+    /**
+     * Captures the sound and record into a WAV file
+     */
+    void start() {
+        try {
+            AudioFormat format = getAudioFormat();
+            DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+
+            // checks if system supports the data line
+            if (!AudioSystem.isLineSupported(info)) {
+                System.out.println("Line not supported");
+                System.exit(0);
+            }
+            line = (TargetDataLine) AudioSystem.getLine(info);
+            line.open(format);
+            line.start();   // start capturing
+
+            System.out.println("Start capturing...");
+
+            AudioInputStream ais = new AudioInputStream(line);
+
+            System.out.println("Start recording...");
+
+            // start recording
+            AudioSystem.write(ais, fileType, wavFile);
+
+        } catch (LineUnavailableException ex) {
+            ex.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+    /**
+     * Closes the target data line to finish capturing and recording
+     */
+    void finish() {
+        line.stop();
+        line.close();
+        System.out.println("Finished");
+    }
+
+    /**
+     * Entry to run the program
+     */
+    public static void main(String[] args) {
+        final JavaSoundRecorder recorder = new JavaSoundRecorder();
+
+        // creates a new thread that waits for a specified
+        // of time before stopping
+        Thread stopper = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(RECORD_TIME);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                recorder.finish();
+            }
+        });
+
+        stopper.start();
+
+        // start recording
+        recorder.start();
+    }
+}
+
+//Good article on sound API: https://www.ibm.com/developerworks/library/it/it-0801art38/
