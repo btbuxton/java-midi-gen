@@ -61,7 +61,10 @@ public class MidiUtil {
      */
     public static final List<String> getMidiReceiverNames() {
         Stream<MidiDevice> devices = getMidiReceivers();
-        return devices.map((device) -> device.getDeviceInfo().getName()).collect(Collectors.toList());
+        return devices
+                .map(MidiDevice::getDeviceInfo)
+                .map(Info::getName)
+                .collect(Collectors.toList());
     }
 
 }

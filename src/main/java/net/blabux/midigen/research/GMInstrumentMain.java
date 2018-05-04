@@ -33,12 +33,16 @@ public class GMInstrumentMain {
 //                System.out.println(channel.getProgram());
 //            }
             MidiChannel one = channels[0];
-            Instrument oneInst = loaded[52];
+            Instrument oneInst = loaded[0];
             System.out.println("Using: " + oneInst.getName() + " for channel 1");
             one.programChange(oneInst.getPatch().getBank(), oneInst.getPatch().getProgram());
+            //portamento
+            //one.controlChange(65, 127);
+            //one.controlChange(5, 64);
+
 
             MidiChannel two = channels[1];
-            Instrument twoInst = loaded[101];
+            Instrument twoInst = loaded[52];
             System.out.println("Using: " + twoInst.getName() + " for channel 2");
             two.programChange(twoInst.getPatch().getBank(), twoInst.getPatch().getProgram());
 
@@ -66,6 +70,7 @@ public class GMInstrumentMain {
             System.out.println("loop start: " + seqr.getLoopStartPoint());
             System.out.println("loop end: " + seqr.getLoopEndPoint());
             System.out.println("sequencer ticks: " + seqr.getTickLength());
+            sleep(250);
             try {
                 seqr.start();
                 while (seqr.isRunning()) {
@@ -84,7 +89,7 @@ public class GMInstrumentMain {
     void createTrack(Sequence seq, int channel, int noteLength) throws InvalidMidiDataException {
         Track track = seq.createTrack();
         short[] notes = {60, 67, 72, 67};
-        int ticks = 0;
+        int ticks = 0; //seq.getResolution(); //start one quarter note in
         for (short each : notes) {
             MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, channel, each, 100);
             MidiEvent eventOn = new MidiEvent(msgOn, ticks);

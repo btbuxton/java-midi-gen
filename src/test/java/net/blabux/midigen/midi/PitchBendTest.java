@@ -11,30 +11,6 @@ import static org.junit.Assert.assertEquals;
 
 public class PitchBendTest {
 
-    @Test
-    public void testA4Midi() {
-        double midi = PitchBend.freqToMidi(440);
-        assertEquals((int) 6900, (int) (midi * 100));
-    }
-
-    @Test
-    public void testA4Freq() {
-        double freq = PitchBend.midiToFreq(69);
-        assertEquals((int) 44000, (int) (freq * 100));
-    }
-
-    @Test
-    public void testMidi() {
-        double midi = PitchBend.freqToMidi(8372.0180896192);
-        assertEquals((int) 12000, (int) (midi * 100));
-    }
-
-    @Test
-    public void testFreq() {
-        double freq = PitchBend.midiToFreq(120);
-        assertEquals((int) 8372018, (int) (freq * 1000));
-    }
-
     //http://www.elvenminstrel.com/music/tuning/reference/pitchbends.shtml
     @Test
     public void pitchBend() {
@@ -56,7 +32,7 @@ public class PitchBendTest {
 
     @Test
     public void pitchBendMidi() {
-        double freq = PitchBend.midiToFreq(78);
+        double freq = MidiMath.midiToFreq(78);
         PitchBend pb = new PitchBend(freq);
         assertEquals(78, pb.midiNote);
         assertEquals(8192, pb.amount);
