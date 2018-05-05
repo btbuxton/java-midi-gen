@@ -134,3 +134,53 @@ public class JavaSoundRecorder {
 }
 
 //Good article on sound API: https://www.ibm.com/developerworks/library/it/it-0801art38/
+
+//Intervals
+Consonant = unison, octave, perfect fifth
+Other Consonant = major 3rd, minor 3rd, major 6th, minor 6th
+Mildly Dissonant = major 2nd, minor 7th, perfect 4th, aug 4th, dim 5th
+Strongly Dissonant = minor 2nd, major 7th
+
+Unison 1/1
+Octave 2/1
+Perfect Fifth 3/2
+Major Third 5/4
+Minor Third 6/5 type 1
+Minor Third 32/27 type 2
+Major second 9/8 type 1
+Major second 10/9 type 2
+Minor second 16/15
+
+//Comping
+6-10
+2r-2-4r-8
+4-4r-2-2-4r
+2-2-4r-4-4r
+4r-4-4r-4r
+2r-2-4r-8
+
+//12 bar blues F Maj
+F-Bb-F-F
+Bb-Bb-F-F
+C-Bb-F-F
+
+//From youtube on movie soundtrack, M=Major, m=minor,# is number of semi-tones
+M2M - Protagonism
+M6M - Outer space
+M8M - Fantastical
+M4m - Sadness, loss
+M5m - Romantic, Middle Eastern
+m5M - Wonder, transcendence (also M7m)
+m2M - mystery or dark comedy
+m11M - Dramatic sound popular in early 21st century
+m6m - Antagonism, danger (less character-based)
+m8m - Antagonism, evil (more character-based)
+
+Chord state machine:
+I -> go anywhere
+ii -> V,iii
+iii -> ii, vi, IV
+IV -> V, I, iii, ii
+V -> I, vi
+vi -> IV, V, ii
+vii -> NONE =(
