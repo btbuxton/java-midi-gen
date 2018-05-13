@@ -18,20 +18,12 @@ public class GMInstrumentMain {
         try {
             final Instrument[] instruments = synth.getDefaultSoundbank().getInstruments();
             int index = 0;
-//            System.out.println("SB Instruments:");
-//            for (Instrument inst : instruments) {
-//                System.out.println("Inst: " + String.valueOf(index++) + " " + inst.getName());
-//            }
-//            System.out.println("Loaded Instruments:");
-//            index = 0;
             final Instrument[] loaded = synth.getLoadedInstruments();
             for (Instrument inst : loaded) {
                 System.out.println("Inst: " + String.valueOf(index++) + " " + inst.getName() + " " + inst.getPatch().getProgram());
             }
             final MidiChannel[] channels = synth.getChannels();
-//            for (MidiChannel channel : channels) {
-//                System.out.println(channel.getProgram());
-//            }
+
             MidiChannel one = channels[0];
             Instrument oneInst = loaded[0];
             System.out.println("Using: " + oneInst.getName() + " for channel 1");
