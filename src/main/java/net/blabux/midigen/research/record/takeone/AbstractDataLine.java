@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.research.record.takeone;
 
 import javax.sound.sampled.*;
 import java.util.LinkedList;
@@ -96,6 +96,7 @@ public abstract class AbstractDataLine implements DataLine {
 
     @Override
     public void close() {
+        System.out.println(String.format("%s.close", getClass().getName()));
         this.bufferSize = 0;
         this.format = null;
         update(LineEvent.Type.CLOSE);

@@ -1,5 +1,6 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.research.record.takeone;
 
+import net.blabux.midigen.research.record.takeone.ReadWriteBuffer;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

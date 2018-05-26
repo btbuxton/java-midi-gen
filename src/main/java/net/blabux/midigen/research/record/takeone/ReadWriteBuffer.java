@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.research.record.takeone;
 
 public class ReadWriteBuffer {
     final byte[] internal;
@@ -25,7 +25,9 @@ public class ReadWriteBuffer {
             internal[writeLoc % size] = b[i];
             writeLoc++;
         }
-        return writeLoc - initialWriteLoc;
+        final int written = writeLoc - initialWriteLoc;
+        System.out.println(String.format("write %d %d %d %d/%d", off, len, written, available(), size));
+        return written;
     }
 
     public int read(byte[] b, int off, int len) {
@@ -39,7 +41,9 @@ public class ReadWriteBuffer {
             b[i] = internal[readLoc % size];
             readLoc++;
         }
-        return readLoc - initialReadLoc;
+        final int read = readLoc - initialReadLoc;
+        System.out.println(String.format("read %d %d %d %d/%d", off, len, read, available(), size));
+        return read;
     }
 
     public int available() {

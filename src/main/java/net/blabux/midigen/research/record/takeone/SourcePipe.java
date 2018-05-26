@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.research.record.takeone;
 
 import javax.sound.sampled.*;
 
@@ -30,16 +30,37 @@ public class SourcePipe extends AbstractDataLine implements SourceDataLine {
 
     @Override
     public int write(byte[] b, int off, int len) {
-        return buffer.write(b, off, len);
+        int write = 0;
+        while (write == 0) {
+            write = buffer.write(b, off, len);
+            if (write > 0)
+                return write;
+            synchronized (this) {
+                try {
+                    this.wait(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return write;
     }
 
     @Override
     public int available() {
-        return bufferSize - buffer.available();
+        final int avail = bufferSize - buffer.available();
+        System.out.println(String.format("SourcePipe avail=%d", avail));
+        return avail;
     }
 
     public TargetDataLine asTargetDataLine() {
-        return new TargetPipe(this);
+        final TargetPipe targetPipe = new TargetPipe(this);
+        try {
+            targetPipe.open();
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+        return targetPipe;
     }
 
     ReadWriteBuffer getBuffer() {

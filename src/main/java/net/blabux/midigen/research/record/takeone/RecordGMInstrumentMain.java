@@ -1,4 +1,4 @@
-package net.blabux.midigen.research;
+package net.blabux.midigen.research.record.takeone;
 
 import com.sun.media.sound.AudioSynthesizer;
 
@@ -15,6 +15,7 @@ public class RecordGMInstrumentMain {
             SourcePipe srcPipe = new SourcePipe();
             srcPipe.open(synth.getFormat());
             final TargetDataLine tgtPipe = srcPipe.asTargetDataLine();
+            tgtPipe.start();
             LineListener listener = new LineListener() {
                 @Override
                 public void update(LineEvent event) {
@@ -54,6 +55,7 @@ public class RecordGMInstrumentMain {
                 main.run(synth);
             } finally {
                 synth.close();
+                srcPipe.close();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
