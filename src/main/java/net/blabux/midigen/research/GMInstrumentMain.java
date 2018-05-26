@@ -1,6 +1,9 @@
 package net.blabux.midigen.research;
 
+import com.sun.media.sound.AudioSynthesizer;
+
 import javax.sound.midi.*;
+import javax.sound.sampled.*;
 
 public class GMInstrumentMain {
     public static void main(String[] args) {
@@ -13,8 +16,14 @@ public class GMInstrumentMain {
     }
 
     void run() throws MidiUnavailableException, InvalidMidiDataException {
-        Synthesizer synth = MidiSystem.getSynthesizer();
-        synth.open();
+        AudioSynthesizer synth = (AudioSynthesizer)MidiSystem.getSynthesizer();
+        SourceDataLine line = null;
+        try {
+            line = AudioSystem.getSourceDataLine(synth.getFormat());
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+        synth.open(line, null);
         try {
             final Instrument[] instruments = synth.getDefaultSoundbank().getInstruments();
             int index = 0;
@@ -47,7 +56,7 @@ public class GMInstrumentMain {
     private void playSimpleSequence(Receiver receiver) throws MidiUnavailableException, InvalidMidiDataException {
         Sequence seq = new Sequence(Sequence.PPQ, 24);
         createTrack(seq, 0, 24);
-        createTrack(seq, 1, 18);
+        createTrack(seq, 1, 24);
         System.out.println("seq tick length: " + seq.getTickLength());
 
         try {
@@ -62,7 +71,7 @@ public class GMInstrumentMain {
             System.out.println("loop start: " + seqr.getLoopStartPoint());
             System.out.println("loop end: " + seqr.getLoopEndPoint());
             System.out.println("sequencer ticks: " + seqr.getTickLength());
-            sleep(250);
+            //sleep(100);
             try {
                 seqr.start();
                 while (seqr.isRunning()) {
@@ -71,7 +80,7 @@ public class GMInstrumentMain {
             } finally {
                 seqr.close();
             }
-            sleep(1000); //so ending it not so abrupt
+            sleep(200); //so ending it not so abrupt
         } finally {
             receiver.close();
         }

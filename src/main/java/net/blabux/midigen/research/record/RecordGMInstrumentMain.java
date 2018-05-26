@@ -1,4 +1,4 @@
-package net.blabux.midigen.research.record.takeone;
+package net.blabux.midigen.research.record;
 
 import com.sun.media.sound.AudioSynthesizer;
 
@@ -12,33 +12,11 @@ public class RecordGMInstrumentMain {
         RecordGMInstrumentMain main = new RecordGMInstrumentMain();
         try {
             AudioSynthesizer synth = (AudioSynthesizer) MidiSystem.getSynthesizer();
-            SourcePipe srcPipe = new SourcePipe();
+            final SourcePipe srcPipe = new SourcePipe();
             srcPipe.open(synth.getFormat());
             final TargetDataLine tgtPipe = srcPipe.asTargetDataLine();
-            tgtPipe.start();
-            LineListener listener = new LineListener() {
-                @Override
-                public void update(LineEvent event) {
-                    if (event.getType().equals(LineEvent.Type.START)) {
-                        synchronized (tgtPipe) {
-                            tgtPipe.notifyAll();
-                        }
-                    }
-                }
-            };
-            srcPipe.addLineListener(listener);
+            //tgtPipe.start();
             new Thread(() -> {
-                synchronized (tgtPipe) {
-                    try {
-                        tgtPipe.wait();
-                        //then wait until there is data
-                        while (tgtPipe.available() != tgtPipe.getBufferSize()) {
-                            tgtPipe.wait(500);
-                        }
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
                 AudioInputStream input = new AudioInputStream(tgtPipe);
                 File fileOut = new File("test-synth-out.wav");
                 System.out.println("Start writing");
@@ -83,7 +61,7 @@ public class RecordGMInstrumentMain {
     private void playSimpleSequence(Receiver receiver) throws MidiUnavailableException, InvalidMidiDataException {
         Sequence seq = new Sequence(Sequence.PPQ, 24);
         createTrack(seq, 0, 24);
-        createTrack(seq, 1, 18);
+        createTrack(seq, 1, 24);
         System.out.println("seq tick length: " + seq.getTickLength());
 
         try {
@@ -96,7 +74,7 @@ public class RecordGMInstrumentMain {
             seqr.setLoopEndPoint(-1);
             //addMetaEventListener(seqr);
 
-            sleep(250);
+            //sleep(250);
             try {
                 seqr.start();
                 while (seqr.isRunning()) {
@@ -105,7 +83,7 @@ public class RecordGMInstrumentMain {
             } finally {
                 seqr.close();
             }
-            sleep(1000); //so ending it not so abrupt
+            sleep(200); //so ending it not so abrupt
         } finally {
             receiver.close();
         }
