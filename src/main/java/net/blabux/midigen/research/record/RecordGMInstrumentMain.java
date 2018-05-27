@@ -25,6 +25,7 @@ public class RecordGMInstrumentMain {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 } finally {
+                    tgtPipe.close();
                     System.out.println("End writing " + System.currentTimeMillis());
                 }
             }).start();
@@ -78,7 +79,7 @@ public class RecordGMInstrumentMain {
             try {
                 seqr.start();
                 while (seqr.isRunning()) {
-                    sleep(200);
+                    sleep(50);
                 }
             } finally {
                 seqr.close();
@@ -99,7 +100,7 @@ public class RecordGMInstrumentMain {
             MidiEvent eventOn = new MidiEvent(msgOn, ticks);
             track.add(eventOn);
             MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, channel, each, 0);
-            MidiEvent eventOff = new MidiEvent(msgOff, (int) (noteLength * 0.9));
+            MidiEvent eventOff = new MidiEvent(msgOff, ticks + (int) (noteLength * 0.9));
             track.add(eventOff);
             ticks += noteLength;
         }

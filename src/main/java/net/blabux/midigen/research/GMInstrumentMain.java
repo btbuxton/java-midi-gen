@@ -6,6 +6,8 @@ import javax.sound.midi.*;
 import javax.sound.sampled.*;
 
 public class GMInstrumentMain {
+    private static final int END_OF_TRACK = 0x2F;
+
     public static void main(String[] args) {
         GMInstrumentMain main = new GMInstrumentMain();
         try {
@@ -67,16 +69,23 @@ public class GMInstrumentMain {
             seqr.open();
             seqr.setLoopCount(3); // Sequencer.LOOP_CONTINUOUSLY
             seqr.setLoopEndPoint(-1);
-            //addMetaEventListener(seqr);
+            addMetaEventListener(seqr);
             System.out.println("loop start: " + seqr.getLoopStartPoint());
             System.out.println("loop end: " + seqr.getLoopEndPoint());
             System.out.println("sequencer ticks: " + seqr.getTickLength());
             //sleep(100);
             try {
                 seqr.start();
-                while (seqr.isRunning()) {
-                    sleep(200);
+                try {
+                    synchronized (seqr) {
+                        seqr.wait();
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
+                //while (seqr.isRunning()) {
+                //    sleep(200);
+                //}
             } finally {
                 seqr.close();
             }
@@ -87,16 +96,26 @@ public class GMInstrumentMain {
 
     }
 
+    private void addMetaEventListener(Sequencer seqr) {
+        seqr.addMetaEventListener((evt) -> {
+            if (END_OF_TRACK == evt.getType()) {
+                synchronized (seqr) {
+                    seqr.notifyAll();
+                }
+            }
+        });
+    }
+
     void createTrack(Sequence seq, int channel, int noteLength) throws InvalidMidiDataException {
         Track track = seq.createTrack();
         short[] notes = {60, 67, 72, 67};
-        int ticks = 0; //seq.getResolution(); //start one quarter note in
+        int ticks = 0;
         for (short each : notes) {
             MidiMessage msgOn = new ShortMessage(ShortMessage.NOTE_ON, channel, each, 100);
             MidiEvent eventOn = new MidiEvent(msgOn, ticks);
             track.add(eventOn);
             MidiMessage msgOff = new ShortMessage(ShortMessage.NOTE_OFF, channel, each, 0);
-            MidiEvent eventOff = new MidiEvent(msgOff, (int) (noteLength * 0.9));
+            MidiEvent eventOff = new MidiEvent(msgOff, ticks + (int) (noteLength * 0.9));
             track.add(eventOff);
             ticks += noteLength;
         }
