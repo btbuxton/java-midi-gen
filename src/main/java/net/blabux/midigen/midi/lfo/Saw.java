@@ -1,7 +1,6 @@
 package net.blabux.midigen.midi.lfo;
 
 public class Saw extends WaveAbstract {
-    private final static double CYCLE_RADS = Math.toRadians(360);
     private final static double FIRST = Math.toRadians(180);
 
     /*
