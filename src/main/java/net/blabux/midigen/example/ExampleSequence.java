@@ -8,7 +8,8 @@ import net.blabux.midigen.midi.MidiUtil;
 import net.blabux.midigen.midi.fixed.SequenceRunner;
 import net.blabux.midigen.midi.fixed.TrackWrapper;
 import net.blabux.midigen.midi.lfo.LFO;
-import net.blabux.midigen.midi.lfo.LFOSine;
+import net.blabux.midigen.midi.lfo.LFOImpl;
+import net.blabux.midigen.midi.lfo.Sine;
 
 import javax.sound.midi.*;
 import java.util.Collections;
@@ -82,9 +83,9 @@ public class ExampleSequence {
         }
         track.placebo(ticks);
 
-        LFO lfo = new LFOSine(seq.getResolution(), 0.25, 64, 64);
-        LFO lfo2 = new LFOSine(seq.getResolution(), 0.75, 96, 32);
-        LFO lfo3 = new LFOSine(seq.getResolution(), 0.3333 / 2, 64, 32);
+        LFO lfo = new LFOImpl(new Sine(), seq.getResolution(), 0.25, 64, 64);
+        LFO lfo2 = new LFOImpl(new Sine(), seq.getResolution(), 0.75, 96, 32);
+        LFO lfo3 = new LFOImpl(new Sine(), seq.getResolution(), 0.3333 / 2, 64, 32);
         for (int pulse = 0; pulse < ticks; pulse++) {
             track.cc(pulse, 74, lfo.next());
             track.cc(pulse, 7, lfo2.next());

@@ -1,7 +1,5 @@
 package net.blabux.midigen.research;
 
-import com.sun.media.sound.AudioSynthesizer;
-
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
 
@@ -17,15 +15,24 @@ public class GMInstrumentMain {
         }
     }
 
+    private static AudioFormat getAudioFormat() {
+        float sampleRate = 44_100.0F;
+        int sampleSizeInBits = 16;
+        int channels = 1;
+        boolean signed = true;
+        boolean bigEndian = true;
+        return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
+    }
+
     void run() throws MidiUnavailableException, InvalidMidiDataException {
-        AudioSynthesizer synth = (AudioSynthesizer)MidiSystem.getSynthesizer();
+        Synthesizer synth = MidiSystem.getSynthesizer();
         SourceDataLine line = null;
         try {
-            line = AudioSystem.getSourceDataLine(synth.getFormat());
+            line = AudioSystem.getSourceDataLine(getAudioFormat());
         } catch (LineUnavailableException e) {
             throw new RuntimeException(e);
         }
-        synth.open(line, null);
+        synth.open();
         try {
             final Instrument[] instruments = synth.getDefaultSoundbank().getInstruments();
             int index = 0;
@@ -62,7 +69,7 @@ public class GMInstrumentMain {
         System.out.println("seq tick length: " + seq.getTickLength());
 
         try {
-            Sequencer seqr = MidiSystem.getSequencer(false);
+            final Sequencer seqr = MidiSystem.getSequencer(false);
             seqr.setSequence(seq);
             seqr.setTempoInBPM(120.0f);
             seqr.getTransmitter().setReceiver(receiver);

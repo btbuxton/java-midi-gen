@@ -2,7 +2,8 @@ package net.blabux.midigen.midi.realtime;
 
 import net.blabux.midigen.midi.MidiUtil;
 import net.blabux.midigen.midi.lfo.LFO;
-import net.blabux.midigen.midi.lfo.LFOSine;
+import net.blabux.midigen.midi.lfo.LFOImpl;
+import net.blabux.midigen.midi.lfo.Sine;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.Receiver;
@@ -42,7 +43,7 @@ public class PulseFuncLFO implements PulseFunc {
                 try (final Receiver recv = device.getReceiver()) {
                     Channel channel = new Channel(recv, 0);
                     final PulseGen pulse = new PulseGen(120, 240);
-                    LFO lfo = new LFOSine(pulse.ticks(1), 0.25, 64, 64);
+                    LFO lfo = new LFOImpl(new Sine(), pulse.ticks(1), 0.25, 64, 64);
                     PulseFuncLFO pulseFunc = new PulseFuncLFO(channel, lfo, 1);
                     final long one_min = pulse.ticks(120);
                     PulseFunc pulseAccept = (tick) -> {

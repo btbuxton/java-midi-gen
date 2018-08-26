@@ -184,3 +184,6 @@ IV -> V, I, iii, ii
 V -> I, vi
 vi -> IV, V, ii
 vii -> NONE =(
+
+
+--add-exports jdk.internal.opt/jdk.internal.joptsimple=ALL-UNNAMED

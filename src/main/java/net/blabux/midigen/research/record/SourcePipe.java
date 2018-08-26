@@ -1,13 +1,15 @@
 package net.blabux.midigen.research.record;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.TargetDataLine;
 import java.io.IOException;
 import java.io.PipedOutputStream;
 
 public class SourcePipe extends AbstractDataLine implements SourceDataLine {
     static final int BUFFER_SECONDS = 1;
     PipedOutputStream output;
-
 
     @Override
     public void open(AudioFormat format, int bufferSize) throws LineUnavailableException {
@@ -35,7 +37,7 @@ public class SourcePipe extends AbstractDataLine implements SourceDataLine {
     }
 
     @Override
-    public int write(byte[] b, int off, int len) {
+    public int write(final byte[] b, final int off, final int len) {
         try {
             output.write(b, off, len);
         } catch (IOException e) {

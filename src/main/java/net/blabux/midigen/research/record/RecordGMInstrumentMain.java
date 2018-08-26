@@ -1,19 +1,20 @@
 package net.blabux.midigen.research.record;
 
-import com.sun.media.sound.AudioSynthesizer;
-
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Attempt to record soundfont synth in Java....failed
+ */
 public class RecordGMInstrumentMain {
     public static void main(String[] args) {
         RecordGMInstrumentMain main = new RecordGMInstrumentMain();
         try {
-            AudioSynthesizer synth = (AudioSynthesizer) MidiSystem.getSynthesizer();
+            Synthesizer synth = MidiSystem.getSynthesizer();
             final SourcePipe srcPipe = new SourcePipe();
-            srcPipe.open(synth.getFormat());
+            srcPipe.open(getAudioFormat());
             final TargetDataLine tgtPipe = srcPipe.asTargetDataLine();
             //tgtPipe.start();
             new Thread(() -> {
@@ -29,7 +30,7 @@ public class RecordGMInstrumentMain {
                     System.out.println("End writing " + System.currentTimeMillis());
                 }
             }).start();
-            synth.open(srcPipe, null);
+            synth.open();
             try {
                 main.run(synth);
             } finally {
@@ -40,6 +41,16 @@ public class RecordGMInstrumentMain {
             ex.printStackTrace();
         }
         System.out.println("Ending it all " + System.currentTimeMillis());
+    }
+
+    private static AudioFormat getAudioFormat() {
+        //return new AudioFileFormat(AudioFileFormat.Type.WAVE
+        float sampleRate = 44_100.0F;
+        int sampleSizeInBits = 16;
+        int channels = 2;
+        boolean signed = true;
+        boolean bigEndian = true;
+        return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
     }
 
     void run(Synthesizer synth) throws MidiUnavailableException, InvalidMidiDataException {

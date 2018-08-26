@@ -54,7 +54,7 @@ public class PulseGen {
                 } catch (InterruptedException e) {
                     break;
                 }
-            } else if (diff > 0) {
+            } else if (diff < 0) {
                 lags++;
             }
         }
@@ -78,7 +78,7 @@ public class PulseGen {
         final java.util.concurrent.atomic.AtomicLong begin = new java.util.concurrent.atomic.AtomicLong(0);
         final java.util.concurrent.atomic.AtomicInteger count = new java.util.concurrent.atomic.AtomicInteger(0);
         final int bpm = 240;
-        final PulseGen gen = new PulseGen(bpm, 240); //right now, 240 is max...run to see lags...should be 0
+        final PulseGen gen = new PulseGen(bpm, 24); //right now, 240 is max...run to see lags...should be 0
         //creation of function take 150-200ms ?!
         final long one_min = gen.ticks(bpm);
         //2 minutes = 240 beats @ 120 bpm

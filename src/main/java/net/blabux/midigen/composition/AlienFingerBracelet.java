@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
  *
  * @author btbuxton
  */
-public class AlienFingerBracelet {
+public class  AlienFingerBracelet {
     private static final Logger LOG = Logger.getLogger(AlienFingerBracelet.class.getName());
     private static final int PPQ = 24;
     private static final int END_OF_TRACK = 0x2F;
