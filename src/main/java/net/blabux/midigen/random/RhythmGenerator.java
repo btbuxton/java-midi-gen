@@ -25,7 +25,7 @@ public class RhythmGenerator {
     public RhythmGenerator() {
         int lengthsIndex = 0;
         for (int index = 0; index < LENGTH_PROBS.length; index++) {
-            int times = (int) (LENGTH_PROBS[index] * 100);
+            int times = (int) (LENGTH_PROBS[index] * SIZE);
             for (int x = 0; x < times; x++) {
                 int value = index + 1;
                 if (9 == value) {
