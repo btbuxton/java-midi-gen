@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * the Java midi framework. All methods will be refactored and moved eventually
  * to better contexts.
  * <p>
- * These methods start our in the example main class and will move here until
+ * These methods start out in the example main class and will move here until
  * better homes can be found.
  *
  * @author btbuxton

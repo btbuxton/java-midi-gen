@@ -6,7 +6,6 @@ import net.blabux.midigen.midi.fixed.SequenceRunner;
 import net.blabux.midigen.research.loader.CurrentState;
 import net.blabux.midigen.research.loader.SequenceStateIterator;
 
-import javax.sound.midi.*;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -16,6 +15,16 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Track;
 
 /**
  * Research for MidiFileStateIterable and CurrentState....
